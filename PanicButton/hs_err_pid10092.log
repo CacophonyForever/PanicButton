@@ -1,0 +1,388 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00000000, pid=10092, tid=3063479152
+#
+# JRE version: 6.0_24-b07
+# Java VM: Java HotSpot(TM) Server VM (19.1-b02 mixed mode linux-x86 )
+# Problematic frame:
+# C  0x00000000
+#
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x09ffa400):  JavaThread "main" [_thread_in_native, id=10098, stack(0xb693f000,0xb6990000)]
+
+siginfo:si_signo=SIGSEGV: si_errno=0, si_code=1 (SEGV_MAPERR), si_addr=0x00000000
+
+Registers:
+EAX=0x770d300c, EBX=0x770d1ff4, ECX=0x00000001, EDX=0x76fb93d8
+ESP=0xb698df1c, EBP=0xb698df68, ESI=0x00000000, EDI=0x770b5b5c
+EIP=0x00000000, CR2=0x00000000, EFLAGS=0x00210202
+
+Register to memory mapping:
+
+EAX=0x770d300c
+0x770d300c: <offset 0xc100c> in /usr/lib/libgstreamer-0.10.so.0.26.0 at 0x77012000
+
+EBX=0x770d1ff4
+0x770d1ff4: <offset 0xbfff4> in /usr/lib/libgstreamer-0.10.so.0.26.0 at 0x77012000
+
+ECX=0x00000001
+0x00000001 is pointing to unknown location
+
+EDX=0x76fb93d8
+0x76fb93d8: g_thread_use_default_impl+0 in /lib/libglib-2.0.so.0 at 0x76eeb000
+
+ESP=0xb698df1c
+0xb698df1c is pointing into the stack for thread: 0x09ffa400
+"main" prio=10 tid=0x09ffa400 nid=0x2772 runnable [0xb698e000]
+   java.lang.Thread.State: RUNNABLE
+
+EBP=0xb698df68
+0xb698df68 is pointing into the stack for thread: 0x09ffa400
+"main" prio=10 tid=0x09ffa400 nid=0x2772 runnable [0xb698e000]
+   java.lang.Thread.State: RUNNABLE
+
+ESI=0x00000000
+0x00000000 is pointing to unknown location
+
+EDI=0x770b5b5c
+0x770b5b5c: <offset 0xa3b5c> in /usr/lib/libgstreamer-0.10.so.0.26.0 at 0x77012000
+
+
+Top of Stack: (sp=0xb698df1c)
+0xb698df1c:   77055be8 770d300c 00000001 00000005
+0xb698df2c:   00000000 00000005 7701b08c 000c0554
+0xb698df3c:   77012000 76ef24c8 770d1ff4 773702a0
+0xb698df4c:   770b5b5c b698dfa8 b7765d90 77055bbb
+0xb698df5c:   770d1ff4 773702a0 770b5b5c b698dfa8
+0xb698df6c:   77055dda 773702a0 00000000 00000088
+0xb698df7c:   77070098 00000000 00000000 7704bca0
+0xb698df8c:   773702a0 00000000 00000090 7704aef0 
+
+Instructions: (pc=0x00000000)
+0xfffffff0:   
+
+Stack: [0xb693f000,0xb6990000],  sp=0xb698df1c,  free space=315k
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  com.sun.jna.Native.invokePointer(JI[Ljava/lang/Object;)J+0
+j  com.sun.jna.Function.invokePointer(I[Ljava/lang/Object;)Lcom/sun/jna/Pointer;+6
+j  com.sun.jna.Function.invoke([Ljava/lang/Object;Ljava/lang/Class;Z)Ljava/lang/Object;+642
+j  com.sun.jna.Function.invoke(Ljava/lang/Class;[Ljava/lang/Object;Ljava/util/Map;)Ljava/lang/Object;+214
+j  com.sun.jna.Library$Handler.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;+341
+j  org.gstreamer.lowlevel.GNative$Handler.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;+241
+j  org.gstreamer.$Proxy16.gst_parse_launch(Ljava/lang/String;[Lcom/sun/jna/Pointer;)Lorg/gstreamer/Pipeline;+20
+j  org.gstreamer.Pipeline.launch(Ljava/lang/String;)Lorg/gstreamer/Pipeline;+14
+j  VideoTest.main([Ljava/lang/String;)V+2
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x77bec000 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=10113, stack(0x774b6000,0x77507000)]
+  0x77bea000 JavaThread "CompilerThread1" daemon [_thread_blocked, id=10112, stack(0x77507000,0x77588000)]
+  0x77be8000 JavaThread "CompilerThread0" daemon [_thread_blocked, id=10111, stack(0x77588000,0x77609000)]
+  0x77be6800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=10110, stack(0x77609000,0x7765a000)]
+  0x77bd7800 JavaThread "Finalizer" daemon [_thread_blocked, id=10109, stack(0x77a5e000,0x77aaf000)]
+  0x77bd6000 JavaThread "Reference Handler" daemon [_thread_blocked, id=10108, stack(0x77aaf000,0x77b00000)]
+=>0x09ffa400 JavaThread "main" [_thread_in_native, id=10098, stack(0xb693f000,0xb6990000)]
+
+Other Threads:
+  0x77bd2400 VMThread [stack: 0x77c11000,0x77c92000] [id=10107]
+  0x77bf6000 WatcherThread [stack: 0x77435000,0x774b6000] [id=10114]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ PSYoungGen      total 16512K, used 9004K [0xa1150000, 0xa23b0000, 0xb37f0000)
+  eden space 14208K, 63% used [0xa1150000,0xa1a1b278,0xa1f30000)
+  from space 2304K, 0% used [0xa2170000,0xa2170000,0xa23b0000)
+  to   space 2304K, 0% used [0xa1f30000,0xa1f30000,0xa2170000)
+ PSOldGen        total 37696K, used 0K [0x7c3f0000, 0x7e8c0000, 0xa1150000)
+  object space 37696K, 0% used [0x7c3f0000,0x7c3f0000,0x7e8c0000)
+ PSPermGen       total 16384K, used 4010K [0x783f0000, 0x793f0000, 0x7c3f0000)
+  object space 16384K, 24% used [0x783f0000,0x787da900,0x793f0000)
+
+Dynamic libraries:
+08048000-08052000 r-xp 00000000 08:01 180586     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/bin/java
+08052000-08053000 rwxp 00009000 08:01 180586     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/bin/java
+09ff4000-0a0c3000 rwxp 00000000 00:00 0          [heap]
+76c00000-76c29000 rwxp 00000000 00:00 0 
+76c29000-76d00000 ---p 00000000 00:00 0 
+76d78000-76d8b000 r-xp 00000000 08:01 9437320    /lib/libz.so.1.2.3.4
+76d8b000-76d8c000 r-xp 00012000 08:01 9437320    /lib/libz.so.1.2.3.4
+76d8c000-76d8d000 rwxp 00013000 08:01 9437320    /lib/libz.so.1.2.3.4
+76d8d000-76dc0000 r-xp 00000000 08:01 9437352    /lib/libpcre.so.3.12.1
+76dc0000-76dc1000 r-xp 00032000 08:01 9437352    /lib/libpcre.so.3.12.1
+76dc1000-76dc2000 rwxp 00033000 08:01 9437352    /lib/libpcre.so.3.12.1
+76dc2000-76ee4000 r-xp 00000000 08:01 4469       /usr/lib/libxml2.so.2.7.7
+76ee4000-76ee5000 ---p 00122000 08:01 4469       /usr/lib/libxml2.so.2.7.7
+76ee5000-76ee9000 r-xp 00122000 08:01 4469       /usr/lib/libxml2.so.2.7.7
+76ee9000-76eea000 rwxp 00126000 08:01 4469       /usr/lib/libxml2.so.2.7.7
+76eea000-76eeb000 rwxp 00000000 00:00 0 
+76eeb000-76fb8000 r-xp 00000000 08:01 9437223    /lib/libglib-2.0.so.0.2600.1
+76fb8000-76fb9000 r-xp 000cc000 08:01 9437223    /lib/libglib-2.0.so.0.2600.1
+76fb9000-76fba000 rwxp 000cd000 08:01 9437223    /lib/libglib-2.0.so.0.2600.1
+76fba000-76ffb000 r-xp 00000000 08:01 5312       /usr/lib/libgobject-2.0.so.0.2600.1
+76ffb000-76ffc000 r-xp 00040000 08:01 5312       /usr/lib/libgobject-2.0.so.0.2600.1
+76ffc000-76ffd000 rwxp 00041000 08:01 5312       /usr/lib/libgobject-2.0.so.0.2600.1
+77012000-770cf000 r-xp 00000000 08:01 113737     /usr/lib/libgstreamer-0.10.so.0.26.0
+770cf000-770d2000 r-xp 000bc000 08:01 113737     /usr/lib/libgstreamer-0.10.so.0.26.0
+770d2000-770d3000 rwxp 000bf000 08:01 113737     /usr/lib/libgstreamer-0.10.so.0.26.0
+770d3000-770d4000 rwxp 00000000 00:00 0 
+770d4000-770ec000 r-xp 00000000 08:01 7601       /usr/lib/libxcb.so.1.1.0
+770ec000-770ed000 r-xp 00017000 08:01 7601       /usr/lib/libxcb.so.1.1.0
+770ed000-770ee000 rwxp 00018000 08:01 7601       /usr/lib/libxcb.so.1.1.0
+770ee000-77207000 r-xp 00000000 08:01 7680       /usr/lib/libX11.so.6.3.0
+77207000-77208000 r-xp 00118000 08:01 7680       /usr/lib/libX11.so.6.3.0
+77208000-7720a000 rwxp 00119000 08:01 7680       /usr/lib/libX11.so.6.3.0
+7720a000-7720b000 rwxp 00000000 00:00 0 
+7720b000-7724e000 r-xp 00000000 08:01 180668     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/xawt/libmawt.so
+7724e000-77250000 rwxp 00043000 08:01 180668     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/xawt/libmawt.so
+77250000-77251000 rwxp 00000000 00:00 0 
+77251000-772d5000 r-xp 00000000 08:01 180635     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libawt.so
+772d5000-772dc000 rwxp 00084000 08:01 180635     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libawt.so
+772dc000-77300000 rwxp 00000000 00:00 0 
+77300000-773e8000 rwxp 00000000 00:00 0 
+773e8000-77400000 ---p 00000000 00:00 0 
+77408000-7740a000 r-xp 00000000 08:01 18886      /usr/lib/libgmodule-2.0.so.0.2600.1
+7740a000-7740b000 r-xp 00002000 08:01 18886      /usr/lib/libgmodule-2.0.so.0.2600.1
+7740b000-7740c000 rwxp 00003000 08:01 18886      /usr/lib/libgmodule-2.0.so.0.2600.1
+7740c000-77410000 r-xp 00000000 08:01 7594       /usr/lib/libXdmcp.so.6.0.0
+77410000-77411000 r-xp 00003000 08:01 7594       /usr/lib/libXdmcp.so.6.0.0
+77411000-77412000 rwxp 00004000 08:01 7594       /usr/lib/libXdmcp.so.6.0.0
+77412000-7741e000 r-xp 00000000 08:01 7206       /usr/lib/libXi.so.6.1.0
+7741e000-7741f000 r-xp 0000b000 08:01 7206       /usr/lib/libXi.so.6.1.0
+7741f000-77420000 rwxp 0000c000 08:01 7206       /usr/lib/libXi.so.6.1.0
+77420000-77434000 r-xp 00000000 08:01 16123474   /tmp/jna-paul/jna8176671709655145482.tmp (deleted)
+77434000-77435000 rwxp 00014000 08:01 16123474   /tmp/jna-paul/jna8176671709655145482.tmp (deleted)
+77435000-77436000 ---p 00000000 00:00 0 
+77436000-774b6000 rwxp 00000000 00:00 0 
+774b6000-774b9000 ---p 00000000 00:00 0 
+774b9000-77507000 rwxp 00000000 00:00 0 
+77507000-7750a000 ---p 00000000 00:00 0 
+7750a000-77588000 rwxp 00000000 00:00 0 
+77588000-7758b000 ---p 00000000 00:00 0 
+7758b000-77609000 rwxp 00000000 00:00 0 
+77609000-7760c000 ---p 00000000 00:00 0 
+7760c000-7765a000 rwxp 00000000 00:00 0 
+7765a000-77768000 r-xp 00000000 08:01 54709      /usr/lib/locale/locale-archive
+77768000-77900000 r-xs 03027000 08:01 180706     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar
+77900000-779fe000 rwxp 00000000 00:00 0 
+779fe000-77a00000 ---p 00000000 00:00 0 
+77a00000-77a03000 r-xp 00000000 08:01 18887      /usr/lib/libgthread-2.0.so.0.2600.1
+77a03000-77a04000 r-xp 00003000 08:01 18887      /usr/lib/libgthread-2.0.so.0.2600.1
+77a04000-77a05000 rwxp 00004000 08:01 18887      /usr/lib/libgthread-2.0.so.0.2600.1
+77a05000-77a09000 r-xp 00000000 08:01 6133       /usr/lib/libXtst.so.6.1.0
+77a09000-77a0a000 r-xp 00003000 08:01 6133       /usr/lib/libXtst.so.6.1.0
+77a0a000-77a0b000 rwxp 00004000 08:01 6133       /usr/lib/libXtst.so.6.1.0
+77a0b000-77a1f000 r-xs 000a0000 00:14 35789695   /home/paul/FMJ/gstreamer-java-1.5.jar
+77a1f000-77a5e000 r-xp 00000000 08:01 179809     /usr/lib/locale/en_US.utf8/LC_CTYPE
+77a5e000-77a61000 ---p 00000000 00:00 0 
+77a61000-77aaf000 rwxp 00000000 00:00 0 
+77aaf000-77ab2000 ---p 00000000 00:00 0 
+77ab2000-77b00000 rwxp 00000000 00:00 0 
+77b00000-77c00000 rwxp 00000000 00:00 0 
+77c01000-77c0f000 r-xp 00000000 08:01 7591       /usr/lib/libXext.so.6.4.0
+77c0f000-77c10000 r-xp 0000d000 08:01 7591       /usr/lib/libXext.so.6.4.0
+77c10000-77c11000 rwxp 0000e000 08:01 7591       /usr/lib/libXext.so.6.4.0
+77c11000-77c12000 ---p 00000000 00:00 0 
+77c12000-77cc6000 rwxp 00000000 00:00 0 
+77cc6000-77cc7000 ---p 00000000 00:00 0 
+77cc7000-77d47000 rwxp 00000000 00:00 0 
+77d47000-77d48000 ---p 00000000 00:00 0 
+77d48000-77dc8000 rwxp 00000000 00:00 0 
+77dc8000-77dc9000 ---p 00000000 00:00 0 
+77dc9000-77e49000 rwxp 00000000 00:00 0 
+77e49000-77e4a000 ---p 00000000 00:00 0 
+77e4a000-77eca000 rwxp 00000000 00:00 0 
+77eca000-77ecb000 ---p 00000000 00:00 0 
+77ecb000-77f4b000 rwxp 00000000 00:00 0 
+77f4b000-77f4c000 ---p 00000000 00:00 0 
+77f4c000-77fcc000 rwxp 00000000 00:00 0 
+77fcc000-77fcd000 ---p 00000000 00:00 0 
+77fcd000-7804d000 rwxp 00000000 00:00 0 
+7804d000-7804e000 ---p 00000000 00:00 0 
+7804e000-780d6000 rwxp 00000000 00:00 0 
+780d6000-780ee000 rwxp 00000000 00:00 0 
+780ee000-78101000 rwxp 00000000 00:00 0 
+78101000-78215000 rwxp 00000000 00:00 0 
+78215000-7821d000 rwxp 00000000 00:00 0 
+7821d000-78235000 rwxp 00000000 00:00 0 
+78235000-78248000 rwxp 00000000 00:00 0 
+78248000-7835b000 rwxp 00000000 00:00 0 
+7835b000-78365000 rwxp 00000000 00:00 0 
+78365000-783ef000 rwxp 00000000 00:00 0 
+783ef000-793f0000 rwxp 00000000 00:00 0 
+793f0000-7c3f0000 rwxp 00000000 00:00 0 
+7c3f0000-7e8c0000 rwxp 00000000 00:00 0 
+7e8c0000-a1150000 rwxp 00000000 00:00 0 
+a1150000-a23b0000 rwxp 00000000 00:00 0 
+a23b0000-b37f0000 rwxp 00000000 00:00 0 
+b37f1000-b37f3000 r-xp 00000000 08:01 6951       /usr/lib/libXau.so.6.0.0
+b37f3000-b37f4000 r-xp 00001000 08:01 6951       /usr/lib/libXau.so.6.0.0
+b37f4000-b37f5000 rwxp 00002000 08:01 6951       /usr/lib/libXau.so.6.0.0
+b37f5000-b37fe000 rwxp 00000000 00:00 0 
+b37fe000-b38b5000 rwxp 00000000 00:00 0 
+b38b5000-b3af5000 rwxp 00000000 00:00 0 
+b3af5000-b68b5000 rwxp 00000000 00:00 0 
+b68b5000-b68c4000 r-xp 00000000 08:01 180637     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libzip.so
+b68c4000-b68c6000 rwxp 0000e000 08:01 180637     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libzip.so
+b68c6000-b68d0000 r-xp 00000000 08:01 9437512    /lib/libnss_files-2.12.1.so
+b68d0000-b68d1000 r-xp 00009000 08:01 9437512    /lib/libnss_files-2.12.1.so
+b68d1000-b68d2000 rwxp 0000a000 08:01 9437512    /lib/libnss_files-2.12.1.so
+b68d2000-b68db000 r-xp 00000000 08:01 9437514    /lib/libnss_nis-2.12.1.so
+b68db000-b68dc000 r-xp 00008000 08:01 9437514    /lib/libnss_nis-2.12.1.so
+b68dc000-b68dd000 rwxp 00009000 08:01 9437514    /lib/libnss_nis-2.12.1.so
+b68dd000-b68e3000 r-xp 00000000 08:01 9437510    /lib/libnss_compat-2.12.1.so
+b68e3000-b68e4000 r-xp 00006000 08:01 9437510    /lib/libnss_compat-2.12.1.so
+b68e4000-b68e5000 rwxp 00007000 08:01 9437510    /lib/libnss_compat-2.12.1.so
+b68e5000-b68f8000 r-xp 00000000 08:01 9437509    /lib/libnsl-2.12.1.so
+b68f8000-b68f9000 r-xp 00012000 08:01 9437509    /lib/libnsl-2.12.1.so
+b68f9000-b68fa000 rwxp 00013000 08:01 9437509    /lib/libnsl-2.12.1.so
+b68fa000-b68fc000 rwxp 00000000 00:00 0 
+b68fe000-b6902000 r-xs 000a6000 00:14 35789757   /home/paul/FMJ/jna.jar
+b6902000-b6909000 r-xs 00000000 08:01 13743      /usr/lib/gconv/gconv-modules.cache
+b6909000-b6911000 rwxs 00000000 08:01 16123463   /tmp/hsperfdata_paul/10092
+b6911000-b6934000 r-xp 00000000 08:01 180632     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libjava.so
+b6934000-b6936000 rwxp 00023000 08:01 180632     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libjava.so
+b6936000-b693d000 r-xp 00000000 08:01 9437916    /lib/librt-2.12.1.so
+b693d000-b693e000 r-xp 00006000 08:01 9437916    /lib/librt-2.12.1.so
+b693e000-b693f000 rwxp 00007000 08:01 9437916    /lib/librt-2.12.1.so
+b693f000-b6942000 ---p 00000000 00:00 0 
+b6942000-b6990000 rwxp 00000000 00:00 0 
+b6990000-b69b4000 r-xp 00000000 08:01 9437372    /lib/libm-2.12.1.so
+b69b4000-b69b5000 r-xp 00023000 08:01 9437372    /lib/libm-2.12.1.so
+b69b5000-b69b6000 rwxp 00024000 08:01 9437372    /lib/libm-2.12.1.so
+b69b6000-b7143000 r-xp 00000000 08:01 180652     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/server/libjvm.so
+b7143000-b7196000 rwxp 0078d000 08:01 180652     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/server/libjvm.so
+b7196000-b75b5000 rwxp 00000000 00:00 0 
+b75b5000-b770c000 r-xp 00000000 08:01 9437301    /lib/libc-2.12.1.so
+b770c000-b770e000 r-xp 00157000 08:01 9437301    /lib/libc-2.12.1.so
+b770e000-b770f000 rwxp 00159000 08:01 9437301    /lib/libc-2.12.1.so
+b770f000-b7712000 rwxp 00000000 00:00 0 
+b7712000-b7714000 r-xp 00000000 08:01 9437358    /lib/libdl-2.12.1.so
+b7714000-b7715000 r-xp 00001000 08:01 9437358    /lib/libdl-2.12.1.so
+b7715000-b7716000 rwxp 00002000 08:01 9437358    /lib/libdl-2.12.1.so
+b7716000-b771d000 r-xp 00000000 08:01 180641     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/jli/libjli.so
+b771d000-b771f000 rwxp 00006000 08:01 180641     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/jli/libjli.so
+b771f000-b7720000 rwxp 00000000 00:00 0 
+b7720000-b7735000 r-xp 00000000 08:01 9437914    /lib/libpthread-2.12.1.so
+b7735000-b7736000 ---p 00015000 08:01 9437914    /lib/libpthread-2.12.1.so
+b7736000-b7737000 r-xp 00015000 08:01 9437914    /lib/libpthread-2.12.1.so
+b7737000-b7738000 rwxp 00016000 08:01 9437914    /lib/libpthread-2.12.1.so
+b7738000-b773a000 rwxp 00000000 00:00 0 
+b773a000-b7740000 r-xp 00000000 08:01 180655     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/native_threads/libhpi.so
+b7740000-b7741000 rwxp 00006000 08:01 180655     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/native_threads/libhpi.so
+b7741000-b7742000 rwxp 00000000 00:00 0 
+b7742000-b7743000 r-xp 00000000 00:00 0 
+b7743000-b774e000 r-xp 00000000 08:01 180666     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libverify.so
+b774e000-b774f000 rwxp 0000b000 08:01 180666     /usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/libverify.so
+b774f000-b7751000 rwxp 00000000 00:00 0 
+b7751000-b7752000 r-xp 00000000 00:00 0          [vdso]
+b7752000-b776e000 r-xp 00000000 08:01 9437284    /lib/ld-2.12.1.so
+b776e000-b776f000 r-xp 0001b000 08:01 9437284    /lib/ld-2.12.1.so
+b776f000-b7770000 rwxp 0001c000 08:01 9437284    /lib/ld-2.12.1.so
+bfb3a000-bfb4f000 rwxp 00000000 00:00 0          [stack]
+
+VM Arguments:
+jvm_args: -Dfile.encoding=UTF-8 
+java_command: VideoTest
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+USERNAME=paul
+LD_LIBRARY_PATH=/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/server:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/../lib/i386:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386/client:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/i386:/usr/lib/xulrunner-1.9.2.13:/usr/lib/xulrunner-1.9.2.13
+SHELL=/bin/bash
+DISPLAY=:0.0
+
+Signal Handlers:
+SIGSEGV: [libjvm.so+0x708f80], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGBUS: [libjvm.so+0x708f80], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGFPE: [libjvm.so+0x5c4100], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGPIPE: [libjvm.so+0x5c4100], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGXFSZ: [libjvm.so+0x5c4100], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGILL: [libjvm.so+0x5c4100], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGUSR1: SIG_DFL, sa_mask[0]=0x00000000, sa_flags=0x00000000
+SIGUSR2: [libjvm.so+0x5c70e0], sa_mask[0]=0x00000004, sa_flags=0x10000004
+SIGHUP: [libjvm.so+0x5c6cc0], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGINT: [libjvm.so+0x5c6cc0], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGTERM: [libjvm.so+0x5c6cc0], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+SIGQUIT: [libjvm.so+0x5c6cc0], sa_mask[0]=0x7ffbfeff, sa_flags=0x10000004
+
+
+---------------  S Y S T E M  ---------------
+
+OS:squeeze/sid
+
+uname:Linux 2.6.32-28-generic #55-Ubuntu SMP Mon Jan 10 21:21:01 UTC 2011 i686
+libc:glibc 2.12.1 NPTL 2.12.1 
+rlimit: STACK 8192k, CORE 0k, NPROC infinity, NOFILE 1024, AS infinity
+load average:0.87 1.08 1.21
+
+/proc/meminfo:
+MemTotal:        3613104 kB
+MemFree:          496376 kB
+Buffers:          195272 kB
+Cached:          1848152 kB
+SwapCached:            0 kB
+Active:          1414088 kB
+Inactive:        1474108 kB
+Active(anon):     610840 kB
+Inactive(anon):   246224 kB
+Active(file):     803248 kB
+Inactive(file):  1227884 kB
+Unevictable:          16 kB
+Mlocked:              16 kB
+HighTotal:       2759560 kB
+HighFree:         317068 kB
+LowTotal:         853544 kB
+LowFree:          179308 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:               316 kB
+Writeback:             0 kB
+AnonPages:        845096 kB
+Mapped:           148488 kB
+Shmem:             12292 kB
+Slab:             149372 kB
+SReclaimable:      91932 kB
+SUnreclaim:        57440 kB
+KernelStack:        4240 kB
+PageTables:         7536 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     1806552 kB
+Committed_AS:    2747580 kB
+VmallocTotal:     122880 kB
+VmallocUsed:       87068 kB
+VmallocChunk:      18940 kB
+HardwareCorrupted:     0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       4096 kB
+DirectMap4k:      151544 kB
+DirectMap4M:      757760 kB
+
+
+CPU:total 8 (4 cores per cpu, 2 threads per core) family 6 model 26 stepping 5, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, ht
+
+Memory: 4k page, physical 3613104k(496376k free), swap 0k(0k free)
+
+vm_info: Java HotSpot(TM) Server VM (19.1-b02) for linux-x86 JRE (1.6.0_24-b07), built on Feb  2 2011 16:51:52 by "java_re" with gcc 3.2.1-7a (J2SE release)
+
+time: Mon Oct 29 22:12:20 2012
+elapsed time: 0 seconds
+
