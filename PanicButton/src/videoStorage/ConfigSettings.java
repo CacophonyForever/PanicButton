@@ -11,7 +11,8 @@ import java.util.List;
 
 public class ConfigSettings implements Serializable{
 
-	public static final String saveSettingsLocation=".StorageSettings";	
+	public static final String saveSettingsLocation=".StorageSettings";
+	private String myName;
 	private File mySaveLocation;
 	private long myMaxSize;
 	private String myFileSaveFormat;
@@ -20,7 +21,18 @@ public class ConfigSettings implements Serializable{
 	
 	public ConfigSettings()
 	{
-		recieveVideoPorts = new ArrayList<Integer>();
+		recieveVideoPorts = new ArrayList<Integer>();		
+	}
+	
+	public void setDefaultSettings()
+	{
+		myName="Default Storage";
+		mySaveLocation = new File(System.getProperty("user.dir"));
+		listenPort=3605;
+		recieveVideoPorts.add(3601);
+		recieveVideoPorts.add(3602);
+		recieveVideoPorts.add(3603);
+		recieveVideoPorts.add(3604);
 	}
 	
 	
@@ -66,6 +78,38 @@ public class ConfigSettings implements Serializable{
 	public void setMyFileSaveFormat(String myFileSaveFormat) {
 		this.myFileSaveFormat = myFileSaveFormat;
 	}
+
+
+	public String getMyName() {
+		return myName;
+	}
+
+
+	public void setMyName(String myName) {
+		this.myName = myName;
+	}
+
+
+	public int getListenPort() {
+		return listenPort;
+	}
+
+
+	public void setListenPort(int listenPort) {
+		this.listenPort = listenPort;
+	}
+
+
+	public List<Integer> getRecieveVideoPorts() {
+		return recieveVideoPorts;
+	}
+
+
+	public void setRecieveVideoPorts(List<Integer> recieveVideoPorts) {
+		this.recieveVideoPorts = recieveVideoPorts;
+	}
+	
+	
 
 	
 	

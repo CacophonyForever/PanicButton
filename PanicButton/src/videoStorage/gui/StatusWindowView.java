@@ -15,6 +15,7 @@ public class StatusWindowView extends JFrame{
 	private JPanel myLayoutPanel;
 	private JTextPane myTextPane;
 	private JButton myConfigureButton;
+	StatusWindowController myController;
 
 		
 	public StatusWindowView()
@@ -33,9 +34,11 @@ public class StatusWindowView extends JFrame{
 		this.setSize(300,400);	
 	}
 	
-	public void addActionListeners(CapturerController controller)
+	public void addActionListeners(StatusWindowController controller)
 	{
-
+		myController=controller;
+		StatusWindowListener butList = new StatusWindowListener(controller);
+		myConfigureButton.addActionListener(butList);		
 	}
 	
 	public void setTextContent(String content)

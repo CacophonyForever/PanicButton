@@ -16,11 +16,11 @@ import videoCapture.gui.trayIcon.TrayController;
 public class StorageTrayIcon extends TrayIcon {
 	
 	private static final File imageFile = new File("/home/paul/PanicB/StorageTrayIcon.png");
-	TrayController myController;
+	StorageTrayController myController;
 	
-	public StorageTrayIcon(TrayController control) throws IOException, AWTException
+	public StorageTrayIcon(StorageTrayController control) throws IOException, AWTException
 	{
-		super((Image) ImageIO.read(imageFile), "PanicButton Capturer");
+		super((Image) ImageIO.read(imageFile), "PanicButton Storage");
 		myController = control;
 		SystemTray tray = SystemTray.getSystemTray();
 		tray.add(this);
@@ -29,9 +29,8 @@ public class StorageTrayIcon extends TrayIcon {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						myController.showCapturerView();
+						myController.showStausWindow();
 					}
-					
 				});
 	}
 	

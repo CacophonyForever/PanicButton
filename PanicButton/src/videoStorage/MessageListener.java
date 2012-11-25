@@ -13,38 +13,44 @@ import java.net.Socket;
 
 import Common.CommonFunctions;
 
-public class MessageListener 
+public class MessageListener extends Thread
 {
 	public static final int DEFAULT_LISTEN_PORT=3605;
 	private static final int CAPTURER_HI_TIMEOUT_IN_MILLIS = 5000;
 	private int myListenPort;
-	private int[] myStreamPorts;
+	private Integer[] myStreamPorts;
 	private boolean doListen;
 	private VideoStorageHost myHost;
 	
 	public MessageListener(VideoStorageHost host)
 	{
 		myListenPort=DEFAULT_LISTEN_PORT;
-		myStreamPorts = new int[]{3602,3603,3604};
+		myStreamPorts = new Integer[]{3602,3603,3604};
 		myHost=host;
-		try {
-			init();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
-	public MessageListener(int port)
+	public void stopListening()
 	{
-		myListenPort=port;
-		myStreamPorts = new int[]{3602,3603,3604};
+		doListen=false;
 	}
 	
-	public void init() throws Exception
+	public MessageListener(VideoStorageHost host, int port, Integer[] streamPorts)
+	{
+		myHost=host;
+		myListenPort=port;
+		myStreamPorts = streamPorts;
+	}
+	
+	public void start()
 	{
 		doListen=true;
-		ServerSocket sock = new ServerSocket(myListenPort);
+		ServerSocket sock=null;
+		try {
+			sock = new ServerSocket(myListenPort);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		while (doListen)
 		{		
 			System.out.println("Listening");
@@ -56,7 +62,12 @@ public class MessageListener
 			} catch (Exception e)
 			{
 				e.printStackTrace();
-				Thread.sleep(250);
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
@@ -103,9 +114,27 @@ public class MessageListener
 	private void handleGetStatus(BufferedReader br, PrintWriter pr)
 	{
 		pr.println("OK");
-		pr.println((myHost.getDiskSpaceLeft()));
+		pr.println((myHost.getMaxFileSpace()));
 		pr.flush();
 	}
+
+	public int getMyListenPort() {
+		return myListenPort;
+	}
+
+	public void setMyListenPort(int myListenPort) {
+		this.myListenPort = myListenPort;
+	}
+
+	public Integer[] getMyStreamPorts() {
+		return myStreamPorts;
+	}
+
+	public void setMyStreamPorts(Integer[] myStreamPorts) {
+		this.myStreamPorts = myStreamPorts;
+	}
+	
+	
 	
 	
 }
