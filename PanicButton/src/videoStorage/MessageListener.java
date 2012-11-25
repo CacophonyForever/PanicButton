@@ -1,66 +1,93 @@
 package videoStorage;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import Common.CommonFunctions;
+// TODO: Auto-generated Javadoc
+/**
+ * The listener interface for receiving message events. The class that is
+ * interested in processing a message event implements this interface, and the
+ * object created with that class is registered with a component using the
+ * component's <code>addMessageListener<code> method. When
+ * the message event occurs, that object's appropriate
+ * method is invoked.
+ * 
+ * @see MessageEvent
+ */
+public class MessageListener extends Thread {
 
-public class MessageListener extends Thread
-{
-	public static final int DEFAULT_LISTEN_PORT=3605;
+	/** The Constant DEFAULT_LISTEN_PORT. */
+	public static final int DEFAULT_LISTEN_PORT = 3605;
+
 	private static final int CAPTURER_HI_TIMEOUT_IN_MILLIS = 5000;
-	private int myListenPort;
-	private Integer[] myStreamPorts;
+	private int listenPort;
+	private Integer[] streamPorts;
 	private boolean doListen;
-	private VideoStorageHost myHost;
-	
-	public MessageListener(VideoStorageHost host)
-	{
-		myListenPort=DEFAULT_LISTEN_PORT;
-		myStreamPorts = new Integer[]{3602,3603,3604};
-		myHost=host;
+	private VideoStorageHost host;
+
+	/**
+	 * Instantiates a new message listener.
+	 * 
+	 * @param host
+	 *            the host
+	 */
+	public MessageListener(VideoStorageHost host) {
+		listenPort = DEFAULT_LISTEN_PORT;
+		streamPorts = new Integer[] { 3602, 3603, 3604 };
+		this.host = host;
 	}
-	
-	public void stopListening()
-	{
-		doListen=false;
+
+	/**
+	 * Stop listening.
+	 */
+	public void stopListening() {
+		doListen = false;
 	}
-	
-	public MessageListener(VideoStorageHost host, int port, Integer[] streamPorts)
-	{
-		myHost=host;
-		myListenPort=port;
-		myStreamPorts = streamPorts;
+
+	/**
+	 * Instantiates a new message listener.
+	 * 
+	 * @param host
+	 *            the host
+	 * @param port
+	 *            the port
+	 * @param streamPorts
+	 *            the stream ports
+	 */
+	public MessageListener(VideoStorageHost host, int port,
+			Integer[] streamPorts) {
+		this.host = host;
+		listenPort = port;
+		this.streamPorts = streamPorts;
 	}
-	
-	public void start()
-	{
-		doListen=true;
-		ServerSocket sock=null;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Thread#start()
+	 */
+	@Override
+	public void start() {
+		doListen = true;
+		ServerSocket sock = null;
 		try {
-			sock = new ServerSocket(myListenPort);
+			sock = new ServerSocket(listenPort);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		while (doListen)
-		{		
-			System.out.println("Listening");
+		while (doListen) {
 			try {
 				Socket s = sock.accept();
-				System.out.println("TE EACCEPTION");
 				handleCaptureListener(s.getInputStream(), s.getOutputStream());
-				
-			} catch (Exception e)
-			{
+
+			} catch (Exception e) {
 				e.printStackTrace();
 				try {
 					Thread.sleep(250);
@@ -71,70 +98,98 @@ public class MessageListener extends Thread
 			}
 		}
 	}
-	
-	private void handleCaptureListener(InputStream is, OutputStream os) throws InterruptedException, IOException
-	{
+
+	/**
+	 * Handle capture listener.
+	 * 
+	 * @param is
+	 *            the is
+	 * @param os
+	 *            the os
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private void handleCaptureListener(InputStream is, OutputStream os)
+			throws InterruptedException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		PrintWriter pr = new PrintWriter(os);
-		long timeoutTime = System.currentTimeMillis() + CAPTURER_HI_TIMEOUT_IN_MILLIS;
-		while ( System.currentTimeMillis() < timeoutTime)
-		{
-			Thread.sleep(100);			
-			System.out.print(";");
-			if (br.ready())
-			{
-				System.out.println("NOPER");
+		long timeoutTime = System.currentTimeMillis()
+				+ CAPTURER_HI_TIMEOUT_IN_MILLIS;
+		while (System.currentTimeMillis() < timeoutTime) {
+			Thread.sleep(100);
+			if (br.ready()) {
 				String camName = br.readLine();
-				System.out.println("Dude says '" + camName+"'");
-				if (camName.equals("Status?"))
-				{
+				if (camName.equals("Status?")) {
 					System.out.println("Got asked for status. Telling it.");
 					handleGetStatus(br, pr);
 					return;
 				}
 				System.out.println("Got " + camName);
-				int port = myStreamPorts[0];
+				int port = streamPorts[0];
 				String fileName = "~/vid" + System.currentTimeMillis() + ".ogg";
-				CaptureListener cLis = new CaptureListener(port,fileName);
-				System.out.println("Initializing listener on port " + port);
+				CaptureListener cLis = new CaptureListener(port, fileName);
 				cLis.start();
-				while (!cLis.isReady())
-				{
-					System.out.print(".");
+				while (!cLis.isReady()) {
 					Thread.sleep(100);
 				}
-				System.out.println("Initialized!");
-				pr.write(myStreamPorts[0] + "\n");
-				System.out.println ("Telling " + camName + " to stream to my port " + myStreamPorts[0]);
+				pr.write(streamPorts[0] + "\n");
 				pr.flush();
 			}
 		}
 	}
-	
-	private void handleGetStatus(BufferedReader br, PrintWriter pr)
-	{
+
+	/**
+	 * Handle get status.
+	 * 
+	 * @param br
+	 *            the br
+	 * @param pr
+	 *            the pr
+	 */
+	private void handleGetStatus(BufferedReader br, PrintWriter pr) {
 		pr.println("OK");
-		pr.println((myHost.getMaxFileSpace()));
+		pr.println((host.getMaxFileSpace()));
 		pr.flush();
 	}
 
+	/**
+	 * Gets the my listen port.
+	 * 
+	 * @return the my listen port
+	 */
 	public int getMyListenPort() {
-		return myListenPort;
+		return listenPort;
 	}
 
+	/**
+	 * Sets the my listen port.
+	 * 
+	 * @param myListenPort
+	 *            the new my listen port
+	 */
 	public void setMyListenPort(int myListenPort) {
-		this.myListenPort = myListenPort;
+		this.listenPort = myListenPort;
 	}
 
+	/**
+	 * Gets the my stream ports.
+	 * 
+	 * @return the my stream ports
+	 */
 	public Integer[] getMyStreamPorts() {
-		return myStreamPorts;
+		return streamPorts;
 	}
 
+	/**
+	 * Sets the my stream ports.
+	 * 
+	 * @param myStreamPorts
+	 *            the new my stream ports
+	 */
 	public void setMyStreamPorts(Integer[] myStreamPorts) {
-		this.myStreamPorts = myStreamPorts;
+		this.streamPorts = myStreamPorts;
 	}
-	
-	
-	
-	
+
 }

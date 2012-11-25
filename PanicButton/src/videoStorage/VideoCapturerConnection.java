@@ -1,6 +1,8 @@
 package videoStorage;
 
-public class VideoCapturerConnection 
-{
-	
+/**
+ * The Class VideoCapturerConnection.
+ */
+public class VideoCapturerConnection {
+
 }

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package videoCapture;
 
 import java.io.BufferedReader;
@@ -8,90 +11,156 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class CapturerStorageServer  implements Serializable{
-	private String myName;
-	private String myHostname;
-	private int myPort;
-	private long myFreeSpace;
-	private String mySaveLocation;
-	
-	
-	
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CapturerStorageServer.
+ */
+public class CapturerStorageServer implements Serializable {
+	private String name;
+	private String hostname;
+	private int port;
+	private long freeSpace;
+	private String saveLocation;
+
+	/**
+	 * Gets the my name.
+	 * 
+	 * @return the my name
+	 */
 	public String getMyName() {
-		return myName;
+		return name;
 	}
 
+	/**
+	 * Sets the my name.
+	 * 
+	 * @param myName
+	 *            the new my name
+	 */
 	public void setMyName(String myName) {
-		this.myName = myName;
+		this.name = myName;
 	}
 
-	public CapturerStorageServer(String hostname, int port)
-	{
-		myHostname = hostname;
-		myPort = port;
+	/**
+	 * Instantiates a new capturer storage server.
+	 * 
+	 * @param hostname
+	 *            the hostname
+	 * @param port
+	 *            the port
+	 */
+	public CapturerStorageServer(String hostname, int port) {
+		this.hostname = hostname;
+		this.port = port;
 	}
 
+	/**
+	 * Gets the my hostname.
+	 * 
+	 * @return the my hostname
+	 */
 	public String getMyHostname() {
-		return myHostname;
+		return hostname;
 	}
 
+	/**
+	 * Sets the my hostname.
+	 * 
+	 * @param myHostname
+	 *            the new my hostname
+	 */
 	public void setMyHostname(String myHostname) {
-		this.myHostname = myHostname;
+		this.hostname = myHostname;
 	}
+
+	/**
+	 * Gets the my port.
+	 * 
+	 * @return the my port
+	 */
 	public int getMyPort() {
-		return myPort;
+		return port;
 	}
 
+	/**
+	 * Sets the my port.
+	 * 
+	 * @param myPort
+	 *            the new my port
+	 */
 	public void setMyPort(int myPort) {
-		this.myPort = myPort;
+		this.port = myPort;
 	}
 
+	/**
+	 * Gets the my free space.
+	 * 
+	 * @return the my free space
+	 */
 	public long getMyFreeSpace() {
-		return myFreeSpace;
+		return freeSpace;
 	}
 
+	/**
+	 * Sets the my free space.
+	 * 
+	 * @param myFreeSpace
+	 *            the new my free space
+	 */
 	public void setMyFreeSpace(long myFreeSpace) {
-		this.myFreeSpace = myFreeSpace;
+		this.freeSpace = myFreeSpace;
 	}
 
+	/**
+	 * Gets the my save location.
+	 * 
+	 * @return the my save location
+	 */
 	public String getMySaveLocation() {
-		return mySaveLocation;
+		return saveLocation;
 	}
 
+	/**
+	 * Sets the my save location.
+	 * 
+	 * @param mySaveLocation
+	 *            the new my save location
+	 */
 	public void setMySaveLocation(String mySaveLocation) {
-		this.mySaveLocation = mySaveLocation;
+		this.saveLocation = mySaveLocation;
 	}
-	
-	public String testConnectToServer()
-	{
+
+	/**
+	 * Attempts to establish a connection with the server. If it is
+	 * successful, it will populate the freeSpace field
+	 * @return the status of the storage server
+	 */
+	public String testConnectToServer() {
 		try {
-			Socket storageServer = new Socket(myHostname,myPort);
+			// Establish a socket and send 'hi' message
+			Socket storageServer = new Socket(hostname, port);
 			PrintWriter pw = new PrintWriter(storageServer.getOutputStream());
-			BufferedReader br = new BufferedReader(new InputStreamReader(storageServer.getInputStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					storageServer.getInputStream()));
 			pw.println("Status?");
 			pw.flush();
-			System.out.println("Said 'sup'");
+			
+			// Read response
 			String status = br.readLine();
-			System.out.println("got status = " + status);
 			String freeSpace = br.readLine();
-			myFreeSpace = Long.parseLong(freeSpace);
-			System.out.println("got freeSpace = " + freeSpace);
+			this.freeSpace = Long.parseLong(freeSpace);
 			storageServer.close();
-			return status;			
-		} catch (UnknownHostException e) {			
+			return status;
+		} catch (UnknownHostException e) {
 			return "Unknown Host";
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			return "Could not Connect";
-		}		
+		}
 	}
-	
-	public String toString()
-	{
-		return myName + " (" + myHostname + ":" + myPort +")";
-	}
-	
-	
-	
-}
 
+	@Override
+	public String toString() {
+		return name + " (" + hostname + ":" + port + ")";
+	}
+
+}

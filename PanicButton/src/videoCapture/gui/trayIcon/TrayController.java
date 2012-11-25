@@ -2,18 +2,30 @@ package videoCapture.gui.trayIcon;
 
 import videoCapture.VideoCapturer;
 
+// TODO: Auto-generated Javadoc
+/**
+ * Controller for the video capturer tray icon.
+ */
 public class TrayController {
-	private VideoCapturer myCapturer;
-	
-	public TrayController(VideoCapturer cap)
-	{
-		myCapturer=cap;
+
+	/** The my capturer. */
+	private VideoCapturer capturer;
+
+	/**
+	 * Instantiates a new tray controller.
+	 * 
+	 * @param cap
+	 *            the cap
+	 */
+	public TrayController(VideoCapturer cap) {
+		capturer = cap;
 	}
-	
-	public void showCapturerView()
-	{
-		System.out.println("DIAPLYING VIEW");
-		myCapturer.displayView();
+
+	/**
+	 * Opens the capturer's status window.
+	 */
+	public void showCapturerView() {
+		capturer.displayView();
 	}
 
 }

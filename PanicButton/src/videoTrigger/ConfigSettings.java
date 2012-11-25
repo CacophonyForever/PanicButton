@@ -8,58 +8,93 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ConfigSettings.
+ */
+public class ConfigSettings implements Serializable {
 
-public class ConfigSettings implements Serializable{
+    /** The check status interval in millis. */
+    public static int CHECK_STATUS_INTERVAL_IN_MILLIS = 10000;
 
-	public static int CHECK_STATUS_INTERVAL_IN_MILLIS=10000;
-	public static final String CONFIG_SAVE_FILE_LOCATION=".TriggerSettings";
-	private List<remoteVideoCapturer> myCaps;
-	private int checkInterval;
-	
-	public static ConfigSettings loadConfigSettingsFromDisk() throws Exception
-	{
-        FileInputStream fileIn =
-            new FileInputStream(CONFIG_SAVE_FILE_LOCATION);
-		ObjectInputStream in = new ObjectInputStream(fileIn);
-		ConfigSettings configSet = (ConfigSettings) in.readObject();
-		in.close();
-		fileIn.close();
-		
-		return configSet;
+    /** The Constant CONFIG_SAVE_FILE_LOCATION. */
+    public static final String CONFIG_SAVE_FILE_LOCATION = ".TriggerSettings";
 
-	}
-	
-	
-	public void saveToDisk() throws Exception
-	{
-        FileOutputStream fileOut = new FileOutputStream(CONFIG_SAVE_FILE_LOCATION);
-            ObjectOutputStream out =
-                               new ObjectOutputStream(fileOut);
-            out.writeObject(this);
-            out.close();
-             fileOut.close();
+    /** The my caps. */
+    private List<remoteVideoCapturer> myCaps;
 
-	}
-	
-	public ConfigSettings()
-	{
-		checkInterval=CHECK_STATUS_INTERVAL_IN_MILLIS;
-		myCaps = new ArrayList<remoteVideoCapturer>();
-	}
-	
-	public void addCapturer(remoteVideoCapturer cap)
-	{
-		myCaps.add(cap);
-	}
-	
-	public List<remoteVideoCapturer> getMyCaps() {
-		return myCaps;
-	}
+    /** The check interval. */
+    private int checkInterval;
 
-	public void setMyCaps(List<remoteVideoCapturer> myCaps) {
-		this.myCaps = myCaps;
-	}
-	
-	
-	
+    /**
+     * Load config settings from disk.
+     * 
+     * @return the config settings
+     * @throws Exception
+     *             the exception
+     */
+    public static ConfigSettings loadConfigSettingsFromDisk() throws Exception {
+	FileInputStream fileIn = new FileInputStream(CONFIG_SAVE_FILE_LOCATION);
+	ObjectInputStream in = new ObjectInputStream(fileIn);
+	ConfigSettings configSet = (ConfigSettings) in.readObject();
+	in.close();
+	fileIn.close();
+
+	return configSet;
+
+    }
+
+    /**
+     * Save to disk.
+     * 
+     * @throws Exception
+     *             the exception
+     */
+    public void saveToDisk() throws Exception {
+	FileOutputStream fileOut = new FileOutputStream(
+		CONFIG_SAVE_FILE_LOCATION);
+	ObjectOutputStream out = new ObjectOutputStream(fileOut);
+	out.writeObject(this);
+	out.close();
+	fileOut.close();
+
+    }
+
+    /**
+     * Instantiates a new config settings.
+     */
+    public ConfigSettings() {
+	checkInterval = CHECK_STATUS_INTERVAL_IN_MILLIS;
+	myCaps = new ArrayList<remoteVideoCapturer>();
+    }
+
+    /**
+     * Adds the capturer.
+     * 
+     * @param cap
+     *            the cap
+     */
+    public void addCapturer(remoteVideoCapturer cap) {
+	myCaps.add(cap);
+    }
+
+    /**
+     * Gets the my caps.
+     * 
+     * @return the my caps
+     */
+    public List<remoteVideoCapturer> getMyCaps() {
+	return myCaps;
+    }
+
+    /**
+     * Sets the my caps.
+     * 
+     * @param myCaps
+     *            the new my caps
+     */
+    public void setMyCaps(List<remoteVideoCapturer> myCaps) {
+	this.myCaps = myCaps;
+    }
+
 }

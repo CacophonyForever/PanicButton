@@ -4,87 +4,106 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class StorageSettingsActionListener implements ActionListener, ListSelectionListener, KeyListener{
-	
-	CapturerController myController;
-	
-	public StorageSettingsActionListener(CapturerController controller)
-	{
-		myController=controller;
-	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
+// TODO: Auto-generated Javadoc
+/**
+ * The listener interface for receiving storageSettingsAction events. The class
+ * that is interested in processing a storageSettingsAction event implements
+ * this interface, and the object created with that class is registered with a
+ * component using the component's
+ * <code>addStorageSettingsActionListener<code> method. When
+ * the storageSettingsAction event occurs, that object's appropriate
+ * method is invoked.
+ * 
+ * @see StorageSettingsActionEvent
+ */
+public class StorageSettingsActionListener implements ActionListener,
+		ListSelectionListener, KeyListener {
 
-		System.out.println(e);
-		if (e.getActionCommand().equals("Add"))
-		{
+	/** The my controller. */
+	CapturerController controller;
+
+	/**
+	 * Instantiates a new storage settings action listener.
+	 * 
+	 * @param controller
+	 *            the controller
+	 */
+	public StorageSettingsActionListener(CapturerController controller) {
+		this.controller = controller;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("Add")) {
+			// Add button clicked
 			addNewStorageServer();
 		}
-		
-		if (e.getActionCommand().equals("Delete"))
-		{
+
+		if (e.getActionCommand().equals("Delete")) {
+			// Delete button clicked
 			deleteStorageServer();
 		}
-		
-		if (e.getActionCommand().equals("Test Server"))
-		{
+
+		if (e.getActionCommand().equals("Test Server")) {
+			// "Test Server" button clicked
 			testServer();
 		}
-		
 	}
-	
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false)
-		{
-		myController.populateFieldsFromSelectedStorage();
+		if (e.getValueIsAdjusting() == false) {
+			// User selects Storage server from list
+			controller.populateFieldsFromSelectedStorage();
 		}
 	}
-	
-	public void testServer()
-	{
-		myController.testEnteredServer();
-	}
-	
-	public void addNewStorageServer()
-	{
-		myController.addStorage();
-	}
-	
-	public void deleteStorageServer()
-	{
-		myController.removeServer();
-	}
-	
-	
-	public void updateEditedStorage()
-	{
-		myController.updateEditedStorage();
+
+	/**
+	 * Test server.
+	 */
+	public void testServer() {
+		controller.testEnteredServer();
 	}
 
+	/**
+	 * Adds the new storage server.
+	 */
+	public void addNewStorageServer() {
+		controller.addStorage();
+	}
+
+	/**
+	 * Delete storage server.
+	 */
+	public void deleteStorageServer() {
+		controller.removeServer();
+	}
+
+	/**
+	 * Update edited storage.
+	 */
+	public void updateEditedStorage() {
+		controller.updateEditedStorage();
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
 	@Override
 	public void keyReleased(KeyEvent e) {
-		System.out.println("SAVING");
-		myController.updateEditedStorage();
-		
+		// User has edited text in one of the fields
+		controller.updateEditedStorage();
 	}
+
 	@Override
 	public void keyTyped(KeyEvent e) {
-
+		// TODO Auto-generated method stub
+		
 	}
 }

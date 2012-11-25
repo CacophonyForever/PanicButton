@@ -10,71 +10,106 @@ import javax.swing.JTextField;
 
 import Common.Constants;
 
+// TODO: Auto-generated Javadoc
+
+/**
+ * The View portion of the Basic Settings tab of the configuration window for
+ * the Video Capturer
+ */
+
 public class BasicsPanel extends JPanel {
-	
-	private JLabel myNameLabel;
-	private JTextField myNameField;
-	
-	private JLabel myListenPortLabel;
-	private JTextField myListenPortField;
 
-	private JLabel myPublicLabel;
-	private JCheckBox myPublicCheckbox;
+	private JLabel nameLabel;
+	private JTextField nameField;
+	private JLabel listenPortLabel;
+	private JTextField listenPortField;
+	private JLabel publicLabel;
+	private JCheckBox publicCheckbox;
 
-	public BasicsPanel()
-	{
-		this.setMaximumSize(new Dimension(50,50));
-		JPanel fieldPanel = new JPanel(new GridLayout(3,2)); 
-		myNameLabel = new JLabel("Name: ");
-		myNameField = new JTextField();
-		
-		myListenPortLabel = new JLabel("Port to listen on: ");
-		myListenPortField = new JTextField();
-				
-		myPublicLabel = new JLabel("Advertise on local network: ");
-		myPublicCheckbox = new JCheckBox();
+	/**
+	 * Instantiates a new basics panel.
+	 */
+	public BasicsPanel() {
+		this.setMaximumSize(new Dimension(50, 50));
+		JPanel fieldPanel = new JPanel(new GridLayout(3, 2));
+		nameLabel = new JLabel("Name: ");
+		nameField = new JTextField();
 
-		fieldPanel.add(myNameLabel);
-		fieldPanel.add(myNameField);
-		
-		fieldPanel.add(myListenPortLabel);
-		fieldPanel.add(myListenPortField);
+		listenPortLabel = new JLabel("Port to listen on: ");
+		listenPortField = new JTextField();
 
-		fieldPanel.add(myPublicLabel);
-		fieldPanel.add(myPublicCheckbox);	
-		
-		fieldPanel.setPreferredSize(new Dimension(600,Constants.VIEW_FIELD_HEIGHT*3));
-		
-		this.add(fieldPanel);				
+		publicLabel = new JLabel("Advertise on local network: ");
+		publicCheckbox = new JCheckBox();
+
+		fieldPanel.add(nameLabel);
+		fieldPanel.add(nameField);
+
+		fieldPanel.add(listenPortLabel);
+		fieldPanel.add(listenPortField);
+
+		fieldPanel.add(publicLabel);
+		fieldPanel.add(publicCheckbox);
+
+		fieldPanel.setPreferredSize(new Dimension(600,
+				Constants.VIEW_FIELD_HEIGHT * 3));
+
+		this.add(fieldPanel);
 	}
-	
-	public String getCapturerName()
-	{
-		return myNameField.getText();
+
+	/**
+	 * Gets the capturer name.
+	 * 
+	 * @return the capturer name
+	 */
+	public String getCapturerName() {
+		return nameField.getText();
 	}
-	
-	public String getListenPort()
-	{
-		return myListenPortField.getText();
+
+	/**
+	 * Gets the listen port.
+	 * 
+	 * @return the listen port
+	 */
+	public String getListenPort() {
+		return listenPortField.getText();
 	}
-	
-	public boolean doesBroadcastPublic()
-	{
-		return myPublicCheckbox.isSelected();
+
+	/**
+	 * Does broadcast public.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean doesBroadcastPublic() {
+		return publicCheckbox.isSelected();
 	}
-	
-	public void setCapturerName(String name)
-	{
-		myNameField.setText(name);
+
+	/**
+	 * Sets the capturer name.
+	 * 
+	 * @param name
+	 *            the new capturer name
+	 */
+	public void setCapturerName(String name) {
+		nameField.setText(name);
 	}
-	
-	public void setListenPort(int port)
-	{
-		myListenPortField.setText(""+port);
+
+	/**
+	 * Sets the listen port.
+	 * 
+	 * @param port
+	 *            the new listen port
+	 */
+	public void setListenPort(int port) {
+		listenPortField.setText("" + port);
 	}
-	
-	public void setDoesBroadcast(boolean broadcast)
-	{
-		this.myPublicCheckbox.setSelected(broadcast);
+
+	/**
+	 * Sets the does broadcast.
+	 * 
+	 * @param broadcast
+	 *            the new does broadcast
+	 */
+	public void setDoesBroadcast(boolean broadcast) {
+		this.publicCheckbox.setSelected(broadcast);
 	}
 }

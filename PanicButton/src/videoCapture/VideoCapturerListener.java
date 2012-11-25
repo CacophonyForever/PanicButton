@@ -8,118 +8,151 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-public class VideoCapturerListener extends Thread
-{
-	private static final int TIMEOUT_IN_MILLIS=5000;
-	public static final int DEFAULT_PORT=3601;
-	private boolean doListen=false;
-	ServerSocket mySock;
-	
-	public VideoCapturer myVideoCapturer;
-	
-	public VideoCapturerListener(VideoCapturer vidcap) throws Exception
-	{
-		doListen=true;
-		myVideoCapturer=vidcap;
-		mySock = new ServerSocket(DEFAULT_PORT);
+// TODO: Auto-generated Javadoc
+/**
+ * The listener interface for receiving videoCapturer events. The class that is
+ * interested in processing a videoCapturer event implements this interface, and
+ * the object created with that class is registered with a component using the
+ * component's <code>addVideoCapturerListener<code> method. When
+ * the videoCapturer event occurs, that object's appropriate
+ * method is invoked.
+ * 
+ * @see VideoCapturerEvent
+ */
+public class VideoCapturerListener extends Thread {
+
+	private static final int TIMEOUT_IN_MILLIS = 5000;
+	public static final int DEFAULT_PORT = 3601;
+	private boolean doListen = false;
+	ServerSocket listeningSocket;
+	public VideoCapturer videoCapturer;
+
+	/**
+	 * Instantiates a new video capturer listener.
+	 * 
+	 * @param vidcap
+	 *            The video capturer
+	 * @throws Exception
+	 *             it can't open a listen socket
+	 */
+	public VideoCapturerListener(VideoCapturer vidcap) throws Exception {
+		doListen = true;
+		videoCapturer = vidcap;
+		listeningSocket = new ServerSocket(DEFAULT_PORT);
 	}
-	
-	public VideoCapturerListener(VideoCapturer vidcap, int port) throws Exception
-	{
-		doListen=true;
-		myVideoCapturer=vidcap;
-		mySock = new ServerSocket(port);
+
+	/**
+	 * Instantiates a new video capturer listener.
+	 * 
+	 * @param vidcap
+	 *            the vidcap
+	 * @param port
+	 *            the port
+	 * @throws Exception
+	 *             the exception
+	 */
+	public VideoCapturerListener(VideoCapturer vidcap, int port)
+			throws Exception {
+		doListen = true;
+		videoCapturer = vidcap;
+		listeningSocket = new ServerSocket(port);
 	}
-	
-	public void run()
-	{
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Thread#run()
+	 */
+	@Override
+	public void run() {
 		listen();
 	}
-	
-	public void listen()
-	{
-		myVideoCapturer.setMyStatus(VideoCapturer.STATUS_READY);
-		while (doListen==true)
-		{
-			System.out.println("LSTEING on port " + mySock.getLocalPort());
-			try
-			{
-				System.out.println("lsnt");
-				Socket s = mySock.accept();
-				System.out.println("AAA");
-				handleConnection(s.getInputStream(), s.getOutputStream());
-			}
-			catch (Exception e)
-			{				
-				System.out.println("AAAAAAA");
-				e.printStackTrace();
-			}
+
+	/**
+	 * Listen.
+	 */
+	public void listen() {
+		videoCapturer.setMyStatus(VideoCapturer.STATUS_READY);
+		while (doListen == true) {			
 			try {
+				Socket s = listeningSocket.accept();
+				handleConnection(s.getInputStream(), s.getOutputStream());	
 				Thread.sleep(250);
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			System.out.println("QQ" + doListen);
 		}
 		try {
-			mySock.close();
+			listeningSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	private void handleConnection(InputStream is, OutputStream os) throws Exception, InterruptedException
-	{
+
+	/**
+	 * Handle an incoming connection
+	 * 
+	 * @param is
+	 *            the connection's input stream
+	 * @param os
+	 *            the connection's output stream
+	 * @throws Exception
+	 *             the exception
+	 */
+	private void handleConnection(InputStream is, OutputStream os)
+			throws Exception{
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		PrintWriter pw  = new PrintWriter(os);
-		long timeoutTime = System.currentTimeMillis() + TIMEOUT_IN_MILLIS;
-		while (!br.ready() && System.currentTimeMillis() < timeoutTime)
-		{
+		PrintWriter pw = new PrintWriter(os);
+		
+		// Wait for response
+		long timeoutTime = System.currentTimeMillis() + TIMEOUT_IN_MILLIS;		
+		while (!br.ready() && System.currentTimeMillis() < timeoutTime) {
 			Thread.sleep(100);
 		}
+		
+		// Make sure there was a response and not a timeout
 		assert br.ready();
+		
 		String command = br.readLine();
-		System.out.println("HANLDE " + command);
-		if (command.equals("Hello"))
-		{
+		
+		if (command.equals("Hello")) {
 			pw.write("Hello\n");
-			pw.write(myVideoCapturer.getMyName() + "testcam\n");
+			pw.write(videoCapturer.getMyName() + "\n");
 			pw.write("Ready\n");
-			pw.flush();			
-		}
-		else if (command.equals("Trigger"))
-		{
-			myVideoCapturer.beginRecording();
+			pw.flush();
+		} else if (command.equals("Trigger")) {
+			videoCapturer.beginRecording();
 			pw.write("Recording\n");
 			pw.flush();
-		}
-		else
-		{
+		} else {
 			throw new Exception("Unknown Command");
 		}
-		
+
 	}
-	
-	public int getSocketPort()
-	{
-		return mySock.getLocalPort();
+
+	/**
+	 * Gets the socket port.
+	 * 
+	 * @return the socket port
+	 */
+	public int getSocketPort() {
+		return listeningSocket.getLocalPort();
 	}
-	
-	public void stopListening()
-	{
+
+	/**
+	 * Stop listening. This kills the thread.
+	 */
+	public void stopListening() {
 		try {
-			mySock.close();
+			listeningSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		doListen=false;
+		doListen = false;
 	}
 
 }
-

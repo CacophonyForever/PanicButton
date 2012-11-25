@@ -1,6 +1,11 @@
 package Common;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Constants.
+ */
 public class Constants {
 
-	public static final int VIEW_FIELD_HEIGHT=24;
+    /** The Constant VIEW_FIELD_HEIGHT. */
+    public static final int VIEW_FIELD_HEIGHT = 24;
 }

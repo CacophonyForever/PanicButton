@@ -1,12 +1,10 @@
 package videoCapture.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
@@ -22,165 +20,187 @@ import org.gstreamer.swing.VideoComponent;
 
 import videoCapture.VideoCaptureDevice;
 
-public class CamerasPanel extends JPanel{
-	
-	private VideoComponent myCameraPreview;
-	private JCheckBox mySelectCamera;
-	private JList myCameraList;
-	private DefaultListModel myCameraListModel;
-	private CameraSettingsActionListener myCameraSettingsActionListener;
-	private Pipeline pipe;
-	Element videofilter;
-	Element videosrc;
-	private int i;
-	
-	public CamerasPanel()
-	{
-		i=1;
-		this.setLayout(new GridLayout(1,2));
-		myCameraListModel = new DefaultListModel();
-		myCameraList = new JList(myCameraListModel);
-		this.add(myCameraList,0,0);
-		JPanel displayGrid = new JPanel(new GridLayout(2,1));
+/**
+ * The View portion of the Cameres Settings tab of the configuration window for
+ * the Video Capturer, for selecting which cameras are actively set to record
+ */
+public class CamerasPanel extends JPanel {
+
+	private static final Logger logger = Logger.getLogger("log");
+
+	private VideoComponent cameraPreview;
+	private JCheckBox selectCamera;
+	private JList cameraList;
+	private DefaultListModel cameraListModel;
+	private CameraSettingsActionListener cameraSettingsActionListener;
+	private Pipeline pipeline;
+	private Element videoFliter;
+	private Element videoSource;
+
+	/**
+	 * Instantiates a new cameras panel.
+	 */
+	public CamerasPanel() {
+		this.setLayout(new GridLayout(1, 2));
+		cameraListModel = new DefaultListModel();
+		cameraList = new JList(cameraListModel);
+		this.add(cameraList, 0, 0);
+		JPanel displayGrid = new JPanel(new GridLayout(2, 1));
 		String[] args = new String[0];
-		Gst.init("SwingVideoTest", args); 
-		myCameraPreview = new VideoComponent();
-		mySelectCamera = new JCheckBox("Use This Camera");
-		displayGrid.add(mySelectCamera,0,0);
-		displayGrid.add(myCameraPreview,1,0);
-		this.add(displayGrid,0,1);
-		myCameraList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		Gst.init("SwingVideoTest", args);
+		cameraPreview = new VideoComponent();
+		selectCamera = new JCheckBox("Use This Camera");
+		displayGrid.add(selectCamera, 0, 0);
+		displayGrid.add(cameraPreview, 1, 0);
+		this.add(displayGrid, 0, 1);
+		cameraList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	}
 
-		myCameraList.addListSelectionListener(myCameraSettingsActionListener);
+	/**
+	 * Adds gui interaction listeners to components on the tab
+	 * 
+	 * @param controller
+	 *            the controller
+	 */
+	public void addListeners(CapturerController controller) {
+		cameraSettingsActionListener = new CameraSettingsActionListener(
+				controller);
+		cameraList.addListSelectionListener(cameraSettingsActionListener);
+		selectCamera.addActionListener(cameraSettingsActionListener);
 	}
-	
-	public void addListeners(CapturerController controller)
-	{
-		myCameraSettingsActionListener = new CameraSettingsActionListener(controller);
-		myCameraList.addListSelectionListener(myCameraSettingsActionListener);
-		mySelectCamera.addActionListener(myCameraSettingsActionListener);
-	}
-	
-	public void populateDeviceList(VideoCaptureDevice[] devices)
-	{
-		for (VideoCaptureDevice device : devices)
-		{
-			myCameraListModel.add(0,device);
+
+	/**
+	 * Populates the device list with a set of video capture devices
+	 * 
+	 * @param devices
+	 *            the devices
+	 */
+	public void populateDeviceList(VideoCaptureDevice[] devices) {
+		for (VideoCaptureDevice device : devices) {
+			cameraListModel.add(0, device);
 		}
 	}
-	
-	public void setSelectedValue(boolean value)
-	{
-		mySelectCamera.setSelected(value);
+
+	/**
+	 * Sets the selected value.
+	 * 
+	 * @param value
+	 *            the new selected value
+	 */
+	public void setSelectedValue(boolean value) {
+		selectCamera.setSelected(value);
 	}
-	
-	public boolean getSelectedValue()
-	{
-		return mySelectCamera.isSelected();
+
+	/**
+	 * Gets the selected value.
+	 * 
+	 * @return the selected value
+	 */
+	public boolean getSelectedValue() {
+		return selectCamera.isSelected();
 	}
-	
-	public VideoCaptureDevice getSelectedCamera()
-	{
-		return (VideoCaptureDevice)myCameraList.getSelectedValue();
+
+	/**
+	 * Gets the selected camera.
+	 * 
+	 * @return the selected camera
+	 */
+	public VideoCaptureDevice getSelectedCamera() {
+		return (VideoCaptureDevice) cameraList.getSelectedValue();
 	}
-	
-	public void displayCamPreview(String device)
-	{
-		if (pipe != null)
-		{
+
+	/**
+	 * Display content from selected camera into preview box
+	 * 
+	 * @param device
+	 *            the location of the device
+	 */
+	public void displayCamPreview(String device) {
+
+		// Check if pipeline is already running and needs to be reset
+		if (pipeline != null) {
 			String[] args = new String[0];
-			System.out.println("AGH");
-			Element videosink = myCameraPreview.getElement();
-			videofilter.unlink(videosink);
+
+			Element videosink = cameraPreview.getElement();
+			logger.info("Disposing old video preview pipeline");
+			// Unlink all components
+			videoFliter.unlink(videosink);
 			videosink.stop();
-			pipe.remove(videosink);
-			pipe.setState(State.NULL);
-			pipe.dispose();
-			videofilter.setState(State.NULL);
-			videofilter.dispose();
-			videosrc.setState(State.NULL);
-			videosrc.dispose();
-			
-			pipe = new Pipeline("pipeline");
-	ElementFactory.make("videotestsrc", "source"); 
-	        // This gives black window with VideoComponent 
-	        videosrc = ElementFactory.make("v4l2src", 
-	"source"); 
-	        
-	        videosrc.set("device",device);
+			pipeline.remove(videosink);
+			pipeline.setState(State.NULL);
+			pipeline.dispose();
+			videoFliter.setState(State.NULL);
+			videoFliter.dispose();
+			videoSource.setState(State.NULL);
+			videoSource.dispose();
 
-	        videofilter = ElementFactory.make("capsfilter", 
-	"flt"); 
-	        videofilter.setCaps(Caps.fromString("video/x-raw-yuv, width=640, height=480")); 
-	                // This gives only black window 	                
-	                // This gives 2nd window with stream from webcam 
-	                // Element videosink = 
-					System.out.println("AAHH");
-	                pipe.addMany(videosrc, videofilter, videosink);
-	                System.out.println("BUUHH");
-	                Element.linkMany(videosrc, videofilter, videosink);
+			// Create new pipeline
+			logger.info("Creating New Pipeline");
+			pipeline = new Pipeline("pipeline");
+			ElementFactory.make("videotestsrc", "source");
+			videoSource = ElementFactory.make("v4l2src", "source");
+			videoSource.set("device", device);
+			videoFliter = ElementFactory.make("capsfilter", "flt");
+			videoFliter.setCaps(Caps
+					.fromString("video/x-raw-yuv, width=640, height=480"));
+			pipeline.addMany(videoSource, videoFliter, videosink);
+			Element.linkMany(videoSource, videoFliter, videosink);
 
-	                // Start the pipeline processing 
-	                pipe.setState(State.PLAYING);
-	                videosink.setState(State.PLAYING);
+			// Start the pipeline processing
+			pipeline.setState(State.PLAYING);
+			videosink.setState(State.PLAYING);
+			logger.info("Pipeline Created");
+		} else {
+			// No previous pipeline exists
+			logger.info("Creating Pipeline");
+			pipeline = new Pipeline("pipeline");
+			ElementFactory.make("videotestsrc", "source");
+			videoSource = ElementFactory.make("v4l2src", "source");
+			videoSource.set("device", device);
+			videoFliter = ElementFactory.make("capsfilter", "flt");
+			videoFliter.setCaps(Caps
+					.fromString("video/x-raw-yuv, width=640, height=480"));
+			Element videosink = cameraPreview.getElement();
+			ElementFactory.make("xvimagesink", "sink");
+			pipeline.addMany(videoSource, videoFliter, videosink);
+			Element.linkMany(videoSource, videoFliter, videosink);
+
+			// Start the pipeline processing
+			pipeline.setState(State.PLAYING);
+			logger.info("Pipeline Created");
 		}
-		else
-		{
-			System.out.println("OOOOoo");
-	       pipe = new Pipeline("pipeline");
-	ElementFactory.make("videotestsrc", "source"); 
-	        // This gives black window with VideoComponent 
-	        videosrc = ElementFactory.make("v4l2src", 
-	"source"); 
-	        
-	        videosrc.set("device",device);
 
-	        videofilter = ElementFactory.make("capsfilter", 
-	"flt"); 
-	        videofilter.setCaps(Caps.fromString("video/x-raw-yuv, width=640, height=480")); 
-	                // This gives only black window 
-	                Element videosink = myCameraPreview.getElement();
-	                // This gives 2nd window with stream from webcam 
-	                // Element videosink = 
-	ElementFactory.make("xvimagesink", "sink"); 
-	                pipe.addMany(videosrc, videofilter, videosink); 
-	                Element.linkMany(videosrc, videofilter, videosink);
-
-	                // Start the pipeline processing 
-	                pipe.setState(State.PLAYING);
-		}      
-		
-		System.out.println("The state is " + pipe.getState());
-		if (pipe.getState().equals(State.PLAYING))
-		{
-			myCameraPreview.setVisible(true);
+		// If pipeline isn't "PLAYING" for some reason, hide the
+		// preview box. TODO: Make this better
+		if (pipeline.getState().equals(State.PLAYING)) {
+			cameraPreview.setVisible(true);
+		} else {
+			cameraPreview.setVisible(false);
 		}
-		else
-		{
-			myCameraPreview.setVisible(false);
-		}
-		myCameraPreview.repaint();
+		cameraPreview.repaint();
 	}
-	
-	public void dispose()
-	{
-		if (pipe != null)
-		{
-		pipe.setState(State.NULL);
-		pipe.dispose();
-		videofilter.setState(State.NULL);
-		videofilter.dispose();
-		videosrc.setState(State.NULL);
-		videosrc.dispose();
+
+	/**
+	 * Dispose any pipeline that might be playing
+	 */
+	public void dispose() {
+		if (pipeline != null) {
+			pipeline.setState(State.NULL);
+			pipeline.dispose();
+			videoFliter.setState(State.NULL);
+			videoFliter.dispose();
+			videoSource.setState(State.NULL);
+			videoSource.dispose();
 		}
 	}
-	
-	public ListModel getCameraListModel()
-	{
-		return myCameraListModel;
-	}
-	
 
+	/**
+	 * Gets the camera list model.
+	 * 
+	 * @return the camera list model
+	 */
+	public ListModel getCameraListModel() {
+		return cameraListModel;
+	}
 
 }
-
