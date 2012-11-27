@@ -35,8 +35,9 @@ public class VideoStorageHost {
 	 * Inits the.
 	 */
 	public void init() {
-		messageListener = new MessageListener(this);
-		messageListener.run();
+
+		//messageListener = new MessageListener(this);
+		messageListener.start();
 		logger.info("System Initialized!");
 		controller.updateStatusWindowContent();
 	}

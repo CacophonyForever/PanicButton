@@ -199,6 +199,8 @@ public class CapturerController {
 	 * Ok config window.
 	 */
 	public void okConfigWindow() {
+		// Create new config setings object with properties set to values
+		// that are entered in the window's fields
 		configSettings.setMyName(configView.getBasicsPanel()
 				.getCapturerName());
 		configSettings.setMyListenPort(Integer.parseInt(configView
@@ -209,8 +211,6 @@ public class CapturerController {
 		ListModel l = configView.getCameraPanel().getCameraListModel();
 		for (int i = 0; i < l.getSize(); i++) {
 			VideoCaptureDevice dev = (VideoCaptureDevice) l.getElementAt(i);
-			System.out.println(dev.getDeviceLocation() + " = "
-					+ dev.isEnabled());
 			devs.add(dev);
 		}
 		configSettings.setMyDevices(devs);

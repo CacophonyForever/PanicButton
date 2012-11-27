@@ -25,6 +25,8 @@ public class VideoSource {
 	private String name;
 	private CapturerStorageServer storageServer;
 	private static final Logger logger = Logger.getLogger("log");
+	
+	private String audioSrc;
 
 	/**
 	 * Instantiates a new video source.
@@ -58,30 +60,44 @@ public class VideoSource {
 		args = Gst.init("PanicButtonStream-" + name, args);
 		pipe = new Pipeline("pipeline");
 		
-		// set up Source
-		ElementFactory.make("videotestsrc", "source");
+		// set up Video Source
 		final Element videosrc = ElementFactory.make("v4l2src", "source");
 		videosrc.set("device", deviceName);
 		final Element videofilter = ElementFactory.make("capsfilter", "flt");
 		videofilter.setCaps(Caps
-				.fromString("video/x-raw-yuv, width=640, height=480"));
-		
-		// set up encoding
+				.fromString("video/x-raw-yuv, width=640, height=480"));	
 		final Element theoraenc = ElementFactory.make("theoraenc", "theoraenc");
 		theoraenc.set("bitrate", 150);
 		
-		// set up stream
-		final Element udpsink = ElementFactory.make("udpsink", "udpsink");
-		final Element fileSink = ElementFactory.make("filesink", "filesink");	
-		fileSink.set("location", "/home/paul/test.foo");
-		udpsink.set("port", port);
-		udpsink.set("host", hostname);
+		// set up Audio Source
+		final Element audiosrc = ElementFactory.make("pulsesrc", "audiosrc");
+		final Element vorbisenc = ElementFactory.make("vorbisenc", "vorbisenc");
+			
+		// TODO set up local storage sink
+//		final Element fileSink = ElementFactory.make("filesink", "filesink");	
+//		fileSink.set("location", "/home/paul/test.foo");
 		
-
+		// set up stream
+		final Element videoUdpSink = ElementFactory.make("udpsink", "udpsink");
+		videoUdpSink.set("port", port);
+		videoUdpSink.set("host", hostname);
+		
+		final Element audioUdpSink = ElementFactory.make("udpsink", "audioudpsink");
+		// TODO probably shouldn't have this +1 here....
+		videoUdpSink.set("port", port+1);
+		audioUdpSink.set("host", hostname);
+				
 		// Start the pipeline processing
 		logger.info("Streaming to " + hostname + " : " + port);
-		pipe.addMany(videosrc, videofilter, theoraenc, udpsink);
-		Element.linkMany(videosrc, videofilter, theoraenc, udpsink);
+		pipe.addMany(videosrc, videofilter, theoraenc, videoUdpSink);
+		Element.linkMany(videosrc, videofilter, theoraenc, videoUdpSink);
+				
+		logger.info("Streaming audio to " + hostname + " : " + port);
+		pipe.addMany(audiosrc, vorbisenc, audioUdpSink);
+		Element.linkMany(audiosrc, vorbisenc, audioUdpSink);
+
+
+		
 		pipe.setState(State.PLAYING);
 	}
 

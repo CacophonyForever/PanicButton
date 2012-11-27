@@ -118,7 +118,7 @@ public class CapturerScanner extends Thread {
      */
     public void sendBroadcast() throws Exception {
 	String Broadcastaddress = new String("255.255.255.255");
-	int port = 9876;
+	int port = videoCapture.BroadcastScannerListener.DEFAULT_LISTEN_PORT;
 	DatagramSocket serverSocket = new DatagramSocket();
 	serverSocket.setBroadcast(true);
 	InetAddress IPAddress = InetAddress.getByName(Broadcastaddress);

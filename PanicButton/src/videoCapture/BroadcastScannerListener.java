@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class BroadcastScannerListener extends Thread {
 
 	public static final int DEFAULT_RESPONSE_PORT = 36001;
-	public static final int DEFAULT_LISTEN_PORT=9871;
+	public static final int DEFAULT_LISTEN_PORT=3666;
 	public static final String DEFAULT_RESPONSE_MESSAGE = "Hello";
 	public static final String DEFAULT_EXPECTED_MESSAGE = "Hello";
 	private static final Logger logger = Logger.getLogger("log");
@@ -63,10 +63,12 @@ public class BroadcastScannerListener extends Thread {
 	 */
 	@Override
 	public void run() {
+		logger.info("Initializing listening for discovering triggerers");
 		try {
 			Listen();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			logger.severe("Could not initiate broadcast scanner listener. This capturer will not publicly advertise");
 		}
 	}

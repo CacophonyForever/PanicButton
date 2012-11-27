@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -21,7 +22,7 @@ import java.net.Socket;
  * @see MessageEvent
  */
 public class MessageListener extends Thread {
-
+	private static final Logger logger = Logger.getLogger("log");
 	/** The Constant DEFAULT_LISTEN_PORT. */
 	public static final int DEFAULT_LISTEN_PORT = 3605;
 
@@ -73,7 +74,8 @@ public class MessageListener extends Thread {
 	 * @see java.lang.Thread#start()
 	 */
 	@Override
-	public void start() {
+	public void run() {
+		System.out.println("FFOOOO");
 		doListen = true;
 		ServerSocket sock = null;
 		try {
@@ -82,6 +84,7 @@ public class MessageListener extends Thread {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		logger.info("Listening on port " + sock.getLocalPort());
 		while (doListen) {
 			try {
 				Socket s = sock.accept();
