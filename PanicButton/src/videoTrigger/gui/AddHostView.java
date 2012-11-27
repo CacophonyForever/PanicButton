@@ -20,92 +20,76 @@ import videoTrigger.VideoTriggerClient;
  * The Class AddHostView.
  */
 public class AddHostView extends JFrame {
+	JTextField hostNameField;
+	JLabel hostNameLabel;
+	JTextField portField;
+	JLabel portLabel;
+	JButton okButton;
+	JButton cancelButton;
+	ActionListener actionListener;
+	VideoTriggerController controller;
 
-    /** The my host name field. */
-    JTextField myHostNameField;
+	/**
+	 * Instantiates a new adds the host view.
+	 * 
+	 * @param client
+	 *            the client
+	 */
+	public AddHostView(VideoTriggerController control) {
+		controller=control;
+		JPanel borderPanel = new JPanel();
+		borderPanel.setLayout(new BorderLayout());
+		JPanel entryGrid = new JPanel();
+		entryGrid.setLayout(new GridLayout(2, 2));
+		hostNameField = new JTextField();
+		hostNameLabel = new JLabel("Hostname");
+		portField = new JTextField();
+		portLabel = new JLabel("Port");
 
-    /** The my host name label. */
-    JLabel myHostNameLabel;
+		entryGrid.add(hostNameLabel);
+		entryGrid.add(hostNameField);
+		entryGrid.add(portLabel);
+		entryGrid.add(portField);
 
-    /** The my port field. */
-    JTextField myPortField;
+		JPanel buttonGrid = new JPanel();
+		buttonGrid.setLayout(new GridLayout(1, 2));
+		okButton = new JButton("OK");
+		cancelButton = new JButton("Cancel");
+		buttonGrid.add(okButton, 0, 0);
+		buttonGrid.add(cancelButton, 0, 1);
 
-    /** The my port label. */
-    JLabel myPortLabel;
+		borderPanel.add(entryGrid, BorderLayout.CENTER);
+		borderPanel.add(buttonGrid, BorderLayout.SOUTH);
 
-    /** The my ok button. */
-    JButton myOkButton;
+		this.getContentPane().add(borderPanel);
+		this.pack();
 
-    /** The my cancel button. */
-    JButton myCancelButton;
+		this.setLocationByPlatform(true);
 
-    /** The my action listener. */
-    ActionListener myActionListener;
+		this.setVisible(true);
 
-    /** The my client. */
-    VideoTriggerClient myClient;
+		actionListener = new AddHostListener(control);
+		okButton.addActionListener(actionListener);
+		cancelButton.addActionListener(actionListener);
 
-    /**
-     * Instantiates a new adds the host view.
-     * 
-     * @param client
-     *            the client
-     */
-    public AddHostView(VideoTriggerClient client) {
-	VideoTriggerClient myClient = client;
-	JPanel borderPanel = new JPanel();
-	borderPanel.setLayout(new BorderLayout());
-	JPanel entryGrid = new JPanel();
-	entryGrid.setLayout(new GridLayout(2, 2));
-	myHostNameField = new JTextField();
-	myHostNameLabel = new JLabel("Hostname");
-	myPortField = new JTextField();
-	myPortLabel = new JLabel("Port");
+	}
 
-	entryGrid.add(myHostNameLabel);
-	entryGrid.add(myHostNameField);
-	entryGrid.add(myPortLabel);
-	entryGrid.add(myPortField);
+	/**
+	 * Gets the entered hostname.
+	 * 
+	 * @return the entered hostname
+	 */
+	public String getEnteredHostname() {
+		return hostNameField.getText();
+	}
 
-	JPanel buttonGrid = new JPanel();
-	buttonGrid.setLayout(new GridLayout(1, 2));
-	myOkButton = new JButton("OK");
-	myCancelButton = new JButton("Cancel");
-	buttonGrid.add(myOkButton, 0, 0);
-	buttonGrid.add(myCancelButton, 0, 1);
-
-	borderPanel.add(entryGrid, BorderLayout.CENTER);
-	borderPanel.add(buttonGrid, BorderLayout.SOUTH);
-
-	this.getContentPane().add(borderPanel);
-	this.pack();
-
-	this.setLocationByPlatform(true);
-
-	this.setVisible(true);
-
-	myActionListener = new addHostActions(client);
-	myOkButton.addActionListener(myActionListener);
-	myCancelButton.addActionListener(myActionListener);
-
-    }
-
-    /**
-     * Gets the entered hostname.
-     * 
-     * @return the entered hostname
-     */
-    public String getEnteredHostname() {
-	return myHostNameField.getText();
-    }
-
-    /**
-     * Gets the entered port.
-     * 
-     * @return the entered port
-     */
-    public int getEnteredPort() {
-	return Integer.parseInt(myPortField.getText());
-    }
+	/**
+	 * Gets the entered port.
+	 * 
+	 * @return the entered port
+	 */
+	public int getEnteredPort() {
+		return Integer.parseInt(portField.getText());
+	}
 
 }

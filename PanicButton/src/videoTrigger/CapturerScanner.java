@@ -107,7 +107,7 @@ public class CapturerScanner extends Thread {
 	}
 
 	serverSocket.close();
-	myClient.readyScan();
+	myClient.doneScanning();
     }
 
     /**

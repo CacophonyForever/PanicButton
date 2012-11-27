@@ -17,28 +17,29 @@ public class VideoCaptureMain {
 	// Launch the capturer
 	public static void main(String[] args) throws IOException, AWTException {
 		CapturerView view = new CapturerView();
-		VideoCapturer cap = new VideoCapturer();
+		VideoCapturer capturer = new VideoCapturer();
 
-		TrayController traytrol = new TrayController(cap);
+		TrayController traytrol = new TrayController(capturer);
 		CapturerTrayIcon trayIcon = new CapturerTrayIcon(traytrol);
 
-		cap.setMyName("Default Capturer");
-		CapturerController comptroll = new CapturerController(view, cap);
+		capturer.setMyName("Default Capturer");
+		CapturerController controller = new CapturerController(view, capturer);
 
 		try {
-			ConfigSettings configSet = ConfigSettings
-					.loadConfigSettingsFromDisk("");
-			cap.loadSettings(configSet);
-			comptroll.setMyConfigSettings(configSet);
+			CapturerConfigSettings configSet = CapturerConfigSettings
+					.loadConfigSettingsFromDisk(CapturerConfigSettings.saveLocation);
+			capturer.loadSettings(configSet);
+			controller.setMyConfigSettings(configSet);
 			if (configSet.isBroadcastPublic()) {
-				cap.initializeBroadcastListener();
+				capturer.initializeBroadcastListener();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("No config file found");
+			controller.setMyConfigSettings (new CapturerConfigSettings());
 		}
-		cap.setMyController(comptroll);
-		comptroll.updateViewText();
+		capturer.setMyController(controller);
+		controller.updateViewText();
 
 	}
 

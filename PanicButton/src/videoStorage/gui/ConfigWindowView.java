@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
-import videoStorage.ConfigSettings;
+import videoStorage.StorageConfigSettings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -126,7 +126,7 @@ public class ConfigWindowView extends JFrame {
 	 * @param settings
 	 *            the settings
 	 */
-	public void populateFields(ConfigSettings settings) {
+	public void populateFields(StorageConfigSettings settings) {
 		nameField.setText(settings.getMyName());
 		listenPortField.setText("" + settings.getListenPort());
 		saveLocationField.setText(settings.getMySaveLocation()

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * The Class ConfigSettings.
  */
-public class ConfigSettings implements Serializable {
+public class TriggerConfigSettings implements Serializable {
 
     /** The check status interval in millis. */
     public static int CHECK_STATUS_INTERVAL_IN_MILLIS = 10000;
@@ -21,7 +21,7 @@ public class ConfigSettings implements Serializable {
     public static final String CONFIG_SAVE_FILE_LOCATION = ".TriggerSettings";
 
     /** The my caps. */
-    private List<remoteVideoCapturer> myCaps;
+    private List<RemoteVideoCapturer> myCaps;
 
     /** The check interval. */
     private int checkInterval;
@@ -33,10 +33,10 @@ public class ConfigSettings implements Serializable {
      * @throws Exception
      *             the exception
      */
-    public static ConfigSettings loadConfigSettingsFromDisk() throws Exception {
+    public static TriggerConfigSettings loadConfigSettingsFromDisk() throws Exception {
 	FileInputStream fileIn = new FileInputStream(CONFIG_SAVE_FILE_LOCATION);
 	ObjectInputStream in = new ObjectInputStream(fileIn);
-	ConfigSettings configSet = (ConfigSettings) in.readObject();
+	TriggerConfigSettings configSet = (TriggerConfigSettings) in.readObject();
 	in.close();
 	fileIn.close();
 
@@ -63,9 +63,9 @@ public class ConfigSettings implements Serializable {
     /**
      * Instantiates a new config settings.
      */
-    public ConfigSettings() {
+    public TriggerConfigSettings() {
 	checkInterval = CHECK_STATUS_INTERVAL_IN_MILLIS;
-	myCaps = new ArrayList<remoteVideoCapturer>();
+	myCaps = new ArrayList<RemoteVideoCapturer>();
     }
 
     /**
@@ -74,7 +74,7 @@ public class ConfigSettings implements Serializable {
      * @param cap
      *            the cap
      */
-    public void addCapturer(remoteVideoCapturer cap) {
+    public void addCapturer(RemoteVideoCapturer cap) {
 	myCaps.add(cap);
     }
 
@@ -83,7 +83,7 @@ public class ConfigSettings implements Serializable {
      * 
      * @return the my caps
      */
-    public List<remoteVideoCapturer> getMyCaps() {
+    public List<RemoteVideoCapturer> getMyCaps() {
 	return myCaps;
     }
 
@@ -93,7 +93,7 @@ public class ConfigSettings implements Serializable {
      * @param myCaps
      *            the new my caps
      */
-    public void setMyCaps(List<remoteVideoCapturer> myCaps) {
+    public void setMyCaps(List<RemoteVideoCapturer> myCaps) {
 	this.myCaps = myCaps;
     }
 

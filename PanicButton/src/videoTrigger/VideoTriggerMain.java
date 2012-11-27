@@ -3,6 +3,9 @@
  */
 package videoTrigger;
 
+import videoTrigger.gui.VideoTriggerController;
+import videoTrigger.gui.VideoTriggerView;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class VideoTriggerMain.
@@ -20,7 +23,11 @@ public class VideoTriggerMain {
 
 	// new CapturerScanner(36000);
 	VideoTriggerClient vc = new VideoTriggerClient();
-
+	VideoTriggerView view = new VideoTriggerView();
+	VideoTriggerController control = new VideoTriggerController(vc,view);
+	view.addActionListeners(control);
+	vc.loadSettings();
+	
     }
 
 }

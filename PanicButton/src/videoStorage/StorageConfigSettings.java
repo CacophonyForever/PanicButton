@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * The Class ConfigSettings.
  */
-public class ConfigSettings implements Serializable {
+public class StorageConfigSettings implements Serializable {
 
 	/** The Constant Default config save file location */
 	public static final String saveSettingsLocation = ".StorageSettings";
@@ -29,7 +29,7 @@ public class ConfigSettings implements Serializable {
 	/**
 	 * Instantiates a new config settings.
 	 */
-	public ConfigSettings() {
+	public StorageConfigSettings() {
 		receiveVideoPorts = new ArrayList<Integer>();
 	}
 
@@ -69,11 +69,11 @@ public class ConfigSettings implements Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static ConfigSettings loadConfigSettingsFromDisk(String location)
+	public static StorageConfigSettings loadConfigSettingsFromDisk(String location)
 			throws Exception {
 		FileInputStream fileIn = new FileInputStream(saveSettingsLocation);
 		ObjectInputStream in = new ObjectInputStream(fileIn);
-		ConfigSettings configSet = (ConfigSettings) in.readObject();
+		StorageConfigSettings configSet = (StorageConfigSettings) in.readObject();
 		in.close();
 		fileIn.close();
 

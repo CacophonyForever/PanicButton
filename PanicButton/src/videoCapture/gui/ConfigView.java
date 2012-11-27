@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import videoCapture.ConfigSettings;
+import videoCapture.CapturerConfigSettings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -148,7 +148,7 @@ public class ConfigView extends JFrame {
 	 * @param set
 	 *            the set
 	 */
-	public void loadSettingsFromConfig(ConfigSettings set) {
+	public void loadSettingsFromConfig(CapturerConfigSettings set) {
 		basicsPanel.setCapturerName(set.getMyName());
 		basicsPanel.setListenPort(set.getMyListenPort());
 		basicsPanel.setDoesBroadcast(set.isBroadcastPublic());

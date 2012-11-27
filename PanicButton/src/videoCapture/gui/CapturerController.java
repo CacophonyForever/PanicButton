@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javax.swing.ListModel;
 
 import videoCapture.CapturerStorageServer;
-import videoCapture.ConfigSettings;
+import videoCapture.CapturerConfigSettings;
 import videoCapture.VideoCaptureDevice;
 import videoCapture.VideoCapturer;
 import Common.CommonFunctions;
@@ -17,7 +17,7 @@ public class CapturerController {
 	CapturerView view;
 	VideoCapturer videoCapturer;
 	ConfigView configView;
-	ConfigSettings configSettings;
+	CapturerConfigSettings configSettings;
 
 	/**
 	 * Instantiates a new capturer controller.
@@ -247,7 +247,7 @@ public class CapturerController {
 	 * 
 	 * @return the my config settings
 	 */
-	public ConfigSettings getMyConfigSettings() {
+	public CapturerConfigSettings getMyConfigSettings() {
 		return configSettings;
 	}
 
@@ -257,7 +257,7 @@ public class CapturerController {
 	 * @param myConfigSettings
 	 *            the new my config settings
 	 */
-	public void setMyConfigSettings(ConfigSettings myConfigSettings) {
+	public void setMyConfigSettings(CapturerConfigSettings myConfigSettings) {
 		this.configSettings = myConfigSettings;
 	}
 

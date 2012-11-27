@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 /**
  * The Class ConfigSettings.
  */
-public class ConfigSettings implements Serializable {
+public class CapturerConfigSettings implements Serializable {
+	
+	public static final String saveLocation = ".capturerConfig";
 
 	private List<CapturerStorageServer> storages;
 	private List<VideoCaptureDevice> devices;
@@ -37,11 +39,11 @@ public class ConfigSettings implements Serializable {
 	 * @throws Exception
 	 *             if settings could not be loaded
 	 */
-	public static ConfigSettings loadConfigSettingsFromDisk(String location)
+	public static CapturerConfigSettings loadConfigSettingsFromDisk(String location)
 			throws Exception {
 		FileInputStream fileIn = new FileInputStream(location);
 		ObjectInputStream in = new ObjectInputStream(fileIn);
-		ConfigSettings configSet = (ConfigSettings) in.readObject();
+		CapturerConfigSettings configSet = (CapturerConfigSettings) in.readObject();
 		in.close();
 		fileIn.close();
 
@@ -51,7 +53,7 @@ public class ConfigSettings implements Serializable {
 	/**
 	 * Instantiates a new config settings.
 	 */
-	public ConfigSettings() {
+	public CapturerConfigSettings() {
 		storages = new ArrayList<CapturerStorageServer>();
 		devices = new ArrayList<VideoCaptureDevice>();
 		try {
@@ -254,7 +256,7 @@ public class ConfigSettings implements Serializable {
 	 *             the exception
 	 */
 	public void saveToDisk() throws Exception {
-		FileOutputStream fileOut = new FileOutputStream("employee.ser");
+		FileOutputStream fileOut = new FileOutputStream(saveLocation);
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(this);
 		out.close();

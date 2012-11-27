@@ -166,7 +166,7 @@ public class VideoCapturer {
 	 * @param configSettings
 	 *            the config settings
 	 */
-	public void loadSettings(ConfigSettings configSettings) {
+	public void loadSettings(CapturerConfigSettings configSettings) {
 		this.setMyStatus(STATUS_INITIALIZING);
 		// set name
 		name = configSettings.getMyName();

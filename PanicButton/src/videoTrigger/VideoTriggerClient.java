@@ -1,9 +1,11 @@
 package videoTrigger;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import videoTrigger.gui.AddHostView;
-import videoTrigger.gui.VideoTriggerActions;
+import videoTrigger.gui.VideoTriggerController;
+import videoTrigger.gui.VideoTriggerListener;
 import videoTrigger.gui.VideoTriggerView;
 
 // TODO: Auto-generated Javadoc
@@ -11,157 +13,104 @@ import videoTrigger.gui.VideoTriggerView;
  * The Class VideoTriggerClient.
  */
 public class VideoTriggerClient {
+	private static final Logger logger = Logger.getLogger("log");
 
-    /** The capturers. */
-    private List<remoteVideoCapturer> capturers;
+	private List<RemoteVideoCapturer> capturers;
+	private VideoTriggerController controller;
+	private AddHostView addWindow;
+	private VideoTriggerListener actions;
+	private CapturerScanner scanner;
+	private TriggerConfigSettings settings;
 
-    /** The my view. */
-    private VideoTriggerView myView;
+	/**
+	 * Instantiates a new video trigger client.
+	 */
 
-    /** The add window. */
-    private AddHostView addWindow;
+	public void loadSettings()
+	{
+		try {
+			settings = TriggerConfigSettings.loadConfigSettingsFromDisk();
+		} catch (Exception e) {
+			System.out.println("No saved settings found.");
+			settings = new TriggerConfigSettings();
+		}
 
-    /** The my actions. */
-    private VideoTriggerActions myActions;
-
-    /** The my scanner. */
-    private CapturerScanner myScanner;
-
-    /** The my settings. */
-    private ConfigSettings mySettings;
-
-    /**
-     * Instantiates a new video trigger client.
-     */
-    public VideoTriggerClient() {
-	try {
-	    mySettings = ConfigSettings.loadConfigSettingsFromDisk();
-	} catch (Exception e) {
-	    System.out.println("No saved settings found.");
-	    mySettings = new ConfigSettings();
+		for (RemoteVideoCapturer r : settings.getMyCaps()) {
+			this.addNewHost(r.getCapturerHost(), r.getCapturerPort());
+		}
 	}
-	myView = new VideoTriggerView(this);
 
-	for (remoteVideoCapturer r : mySettings.getMyCaps()) {
-	    this.addNewHost(r.getCapturerHost(), r.getCapturerPort());
+	/**
+	 * Adds the new host.
+	 * 
+	 * @param hostname
+	 *            the hostname
+	 * @param port
+	 *            the port
+	 */
+	public void addNewHost(String hostname, int port) {
+		// addWindow.dispose();
+		RemoteVideoCapturer newCap = new RemoteVideoCapturer();
+		newCap.setCapturerHost(hostname);
+		newCap.setCapturerPort(port);
+		// ensure its not a dup
+
+		if (controller.doesListContain(newCap))
+			return;
+
+		newCap.confirmExistence();
+		settings.addCapturer(newCap);
+		try {
+			settings.saveToDisk();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		controller.addCapturerToList(newCap);
 	}
-    }
 
-    /**
-     * Show add host window.
-     */
-    public void showAddHostWindow() {
-	addWindow = new AddHostView(this);
-    }
-
-    /**
-     * Cancel add host window.
-     */
-    public void cancelAddHostWindow() {
-	addWindow.dispose();
-    }
-
-    /**
-     * Adds the new host.
-     * 
-     * @param hostname
-     *            the hostname
-     * @param port
-     *            the port
-     */
-    public void addNewHost(String hostname, int port) {
-	// addWindow.dispose();
-	remoteVideoCapturer newCap = new remoteVideoCapturer();
-	newCap.setCapturerHost(hostname);
-	newCap.setCapturerPort(port);
-	// ensure its not a dup
-	if (myView.getCapturerListModel().contains(newCap))
-	    return;
-
-	newCap.confirmExistence();
-	mySettings.addCapturer(newCap);
-	try {
-	    mySettings.saveToDisk();
-	} catch (Exception e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	/**
+	 * Scan network.
+	 */
+	public void scanNetwork() {
+		controller.setScanButtonInUse();
+		scanner = new CapturerScanner(36001, this);
+		scanner.scanNetwork();
 	}
-	myView.addItemToList(newCap);
-    }
-
-    /**
-     * Gets the my view.
-     * 
-     * @return the my view
-     */
-    public VideoTriggerView getMyView() {
-	return myView;
-    }
-
-    /**
-     * Sets the my view.
-     * 
-     * @param myView
-     *            the new my view
-     */
-    public void setMyView(VideoTriggerView myView) {
-	this.myView = myView;
-    }
-
-    /**
-     * Gets the adds the window.
-     * 
-     * @return the adds the window
-     */
-    public AddHostView getAddWindow() {
-	return addWindow;
-    }
-
-    /**
-     * Sets the adds the window.
-     * 
-     * @param addWindow
-     *            the new adds the window
-     */
-    public void setAddWindow(AddHostView addWindow) {
-	this.addWindow = addWindow;
-    }
-
-    /**
-     * Scan network.
-     */
-    public void scanNetwork() {
-	myView.setScanActive();
-	myScanner = new CapturerScanner(36001, this);
-	myScanner.scanNetwork();
-    }
-
-    /**
-     * Trigger.
-     */
-    public void trigger() {
-	for (Object rvc : myView.getSelected()) {
-
-	    System.out.println("Yo, " + rvc.getClass());
-	    remoteVideoCapturer r = (remoteVideoCapturer) rvc;
-	    System.out.println("Hey there, " + r.getCapturerHost() + ":"
-		    + r.getCapturerPort());
-
-	    try {
-		r.triggerRecording();
-	    } catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-	    myView.updateList();
-
+	
+	public void doneScanning()
+	{
+		controller.setScanButtonReady();
 	}
-    }
 
-    /**
-     * Ready scan.
-     */
-    public void readyScan() {
-	myView.setScanReady();
-    }
+	/**
+	 * Trigger.
+	 */
+	public void trigger() {
+		logger.info("Triggering");
+		for (Object rvc : controller.getListSelected()) {
+			RemoteVideoCapturer r = (RemoteVideoCapturer) rvc;
+			logger.info("Giving " + r.getCapturerHost() + ":"
+					+ r.getCapturerPort() + " the record command");
+			try {
+				r.triggerRecording();
+			} catch (Exception e) {
+				logger.severe("Could not trigger");
+			}
+			controller.updateList();
+		}
+	}
+
+	public VideoTriggerController getController() {
+		return controller;
+	}
+
+	public void setController(VideoTriggerController controller) {
+		this.controller = controller;
+	}
+	
+	
+	
+	
+
 }

@@ -22,7 +22,7 @@ public class CapturerTrayIcon extends TrayIcon {
 	// Location of tray icon image file
 	private static final File imageFile = new File(
 			"/home/paul/PanicB/CapturerTrayIcon.png");
-	
+
 	private static final Logger logger = Logger.getLogger("log");
 	TrayController controller;
 

@@ -14,135 +14,120 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import videoTrigger.VideoTriggerClient;
-import videoTrigger.remoteVideoCapturer;
+import videoTrigger.RemoteVideoCapturer;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class VideoTriggerView.
  */
 public class VideoTriggerView extends JFrame {
+	private JPanel borderPanel;
+	private JList capturerList;
+	private JPanel buttonPanel;
+	private JButton addManualButton;
+	private JButton scanNetworkButton;
+	private JButton triggerCaptureButton;
+	ActionListener actListen;
+	private DefaultListModel capturerListModel;
 
-    /** The my border panel. */
-    private JPanel myBorderPanel;
+	/**
+	 * Instantiates a new video trigger view.
+	 * 
+	 * @param client
+	 *            the client
+	 */
+	public VideoTriggerView() {
+		borderPanel = new JPanel();
+		borderPanel.setLayout(new BorderLayout());
+		capturerListModel = new DefaultListModel();
+		capturerList = new JList(capturerListModel);
+		buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(1, 3));
+		addManualButton = new JButton("Manual Add");
+		scanNetworkButton = new JButton("Scan Network");
+		triggerCaptureButton = new JButton("Trigger");
+		borderPanel.add(capturerList, BorderLayout.CENTER);
+		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+		buttonPanel.add(addManualButton, 0, 0);
+		buttonPanel.add(scanNetworkButton, 0, 1);
+		buttonPanel.add(triggerCaptureButton, 0, 2);
+		this.getContentPane().add(borderPanel);
+		this.setSize(600, 400);
+		this.setLocationByPlatform(true);
+		this.setVisible(true);
 
-    /** The my capturer list. */
-    private JList myCapturerList;
+	}
+	
+	public void addActionListeners (VideoTriggerController control)
+	{
+		ActionListener actListen = new VideoTriggerListener(control);
+		
+		
+		addManualButton.addActionListener(actListen);
+		scanNetworkButton.addActionListener(actListen);
+		triggerCaptureButton.addActionListener(actListen);
+	}
 
-    /** The my button panel. */
-    private JPanel myButtonPanel;
+	/**
+	 * Adds the item to list.
+	 * 
+	 * @param cap
+	 *            the cap
+	 */
+	public void addItemToList(RemoteVideoCapturer cap) {
+		capturerListModel.addElement(cap);
+		capturerList.repaint();
+	}
 
-    /** The my add manual button. */
-    private JButton myAddManualButton;
+	/**
+	 * Gets the selected.
+	 * 
+	 * @return the selected
+	 */
+	public Object[] getSelected() {
+		return capturerList.getSelectedValues();
+	}
 
-    /** The my scan network button. */
-    private JButton myScanNetworkButton;
+	/**
+	 * Sets the scan active.
+	 */
+	public void setScanActive() {
+		scanNetworkButton.setText("Scanning...");
+		scanNetworkButton.setEnabled(false);
+	}
 
-    /** The my trigger capture button. */
-    private JButton myTriggerCaptureButton;
+	/**
+	 * Sets the scan ready.
+	 */
+	public void setScanReady() {
+		scanNetworkButton.setText("Scan Network");
+		scanNetworkButton.setEnabled(true);
+	}
 
-    /** The my act listen. */
-    ActionListener myActListen;
+	/**
+	 * Gets the capturer list model.
+	 * 
+	 * @return the capturer list model
+	 */
+	public DefaultListModel getCapturerListModel() {
+		return capturerListModel;
+	}
 
-    /** The my client. */
-    private VideoTriggerClient myClient;
+	/**
+	 * Sets the capturer list model.
+	 * 
+	 * @param capturerListModel
+	 *            the new capturer list model
+	 */
+	public void setCapturerListModel(DefaultListModel capturerListModel) {
+		this.capturerListModel = capturerListModel;
+	}
 
-    /** The capturer list model. */
-    private DefaultListModel capturerListModel;
-
-    /**
-     * Instantiates a new video trigger view.
-     * 
-     * @param client
-     *            the client
-     */
-    public VideoTriggerView(VideoTriggerClient client) {
-	myBorderPanel = new JPanel();
-	myBorderPanel.setLayout(new BorderLayout());
-	capturerListModel = new DefaultListModel();
-	myCapturerList = new JList(capturerListModel);
-	myButtonPanel = new JPanel();
-	myButtonPanel.setLayout(new GridLayout(1, 3));
-	myAddManualButton = new JButton("Manual Add");
-	myScanNetworkButton = new JButton("Scan Network");
-	myTriggerCaptureButton = new JButton("Trigger");
-	myBorderPanel.add(myCapturerList, BorderLayout.CENTER);
-	myBorderPanel.add(myButtonPanel, BorderLayout.SOUTH);
-	myButtonPanel.add(myAddManualButton, 0, 0);
-	myButtonPanel.add(myScanNetworkButton, 0, 1);
-	myButtonPanel.add(myTriggerCaptureButton, 0, 2);
-	this.getContentPane().add(myBorderPanel);
-	this.setSize(600, 400);
-	this.setLocationByPlatform(true);
-	this.setVisible(true);
-
-	myClient = client;
-
-	ActionListener myActListen = new VideoTriggerActions(client);
-	myAddManualButton.addActionListener(myActListen);
-	myScanNetworkButton.addActionListener(myActListen);
-	myTriggerCaptureButton.addActionListener(myActListen);
-    }
-
-    /**
-     * Adds the item to list.
-     * 
-     * @param cap
-     *            the cap
-     */
-    public void addItemToList(remoteVideoCapturer cap) {
-	capturerListModel.addElement(cap);
-	myCapturerList.repaint();
-    }
-
-    /**
-     * Gets the selected.
-     * 
-     * @return the selected
-     */
-    public Object[] getSelected() {
-	return myCapturerList.getSelectedValues();
-    }
-
-    /**
-     * Sets the scan active.
-     */
-    public void setScanActive() {
-	myScanNetworkButton.setText("Scanning...");
-	myScanNetworkButton.setEnabled(false);
-    }
-
-    /**
-     * Sets the scan ready.
-     */
-    public void setScanReady() {
-	myScanNetworkButton.setText("Scan Network");
-	myScanNetworkButton.setEnabled(true);
-    }
-
-    /**
-     * Gets the capturer list model.
-     * 
-     * @return the capturer list model
-     */
-    public DefaultListModel getCapturerListModel() {
-	return capturerListModel;
-    }
-
-    /**
-     * Sets the capturer list model.
-     * 
-     * @param capturerListModel
-     *            the new capturer list model
-     */
-    public void setCapturerListModel(DefaultListModel capturerListModel) {
-	this.capturerListModel = capturerListModel;
-    }
-
-    /**
-     * Update list.
-     */
-    public void updateList() {
-	myCapturerList.repaint();
-    }
+	/**
+	 * Update list.
+	 */
+	public void updateList() {
+		capturerList.repaint();
+	}
 
 }

@@ -19,7 +19,7 @@ public class VideoStorageHost {
 	private String status;
 	private StatusWindowController controller;
 	private String name;
-	private ConfigSettings mySettings;
+	private StorageConfigSettings mySettings;
 
 	/**
 	 * Instantiates a new video storage host.
@@ -207,7 +207,7 @@ public class VideoStorageHost {
 	 * 
 	 * @return the my settings
 	 */
-	public ConfigSettings getMySettings() {
+	public StorageConfigSettings getMySettings() {
 		return mySettings;
 	}
 
@@ -217,7 +217,7 @@ public class VideoStorageHost {
 	 * @param mySettings
 	 *            the new my settings
 	 */
-	public void setMySettings(ConfigSettings mySettings) {
+	public void setMySettings(StorageConfigSettings mySettings) {
 		this.mySettings = mySettings;
 	}
 

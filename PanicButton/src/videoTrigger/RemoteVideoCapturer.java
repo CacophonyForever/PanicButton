@@ -10,7 +10,7 @@ import java.net.Socket;
 /**
  * The Class remoteVideoCapturer.
  */
-public class remoteVideoCapturer implements Serializable {
+public class RemoteVideoCapturer implements Serializable {
 
     /** The capturer host. */
     private String capturerHost;
@@ -155,7 +155,7 @@ public class remoteVideoCapturer implements Serializable {
      */
     @Override
     public boolean equals(Object compobj) {
-	remoteVideoCapturer compare = (remoteVideoCapturer) compobj;
+	RemoteVideoCapturer compare = (RemoteVideoCapturer) compobj;
 	System.out.println("hey!!!");
 	if (!capturerHost.equals(compare.getCapturerHost()))
 	    return false;

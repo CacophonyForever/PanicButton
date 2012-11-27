@@ -24,14 +24,14 @@ public class VideoStorageMain {
      */
     public static void main(String[] args) {
 
-	ConfigSettings set;
+	StorageConfigSettings set;
 	try {
-	    set = ConfigSettings
-		    .loadConfigSettingsFromDisk(ConfigSettings.saveSettingsLocation);
+	    set = StorageConfigSettings
+		    .loadConfigSettingsFromDisk(StorageConfigSettings.saveSettingsLocation);
 	} catch (Exception e1) {
 	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
-	    set = new ConfigSettings();
+	    set = new StorageConfigSettings();
 	    set.setDefaultSettings();
 	}
 

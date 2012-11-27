@@ -2,7 +2,7 @@ package videoStorage.gui;
 
 import java.io.File;
 
-import videoStorage.ConfigSettings;
+import videoStorage.StorageConfigSettings;
 import videoStorage.VideoStorageHost;
 import Common.CommonFunctions;
 
@@ -84,8 +84,8 @@ public class ConfigWindowController {
 	 * 
 	 * @return the settings from entered values
 	 */
-	public ConfigSettings getSettingsFromEnteredValues() {
-		ConfigSettings set = new ConfigSettings();
+	public StorageConfigSettings getSettingsFromEnteredValues() {
+		StorageConfigSettings set = new StorageConfigSettings();
 		set.setListenPort(view.getEnteredPort());
 		set.setMyMaxSize(getSetSliderValue());
 		set.setMyName(view.getEnteredName());
@@ -99,7 +99,7 @@ public class ConfigWindowController {
 	 * Save settings to disk and applies them to the storage host
 	 */
 	public void saveSettings() {
-		ConfigSettings mySettings = getSettingsFromEnteredValues();
+		StorageConfigSettings mySettings = getSettingsFromEnteredValues();
 		try {
 			mySettings.saveToDisk();
 			host.setMySettings(mySettings);
