@@ -84,7 +84,7 @@ public class VideoSource {
 		
 		final Element audioUdpSink = ElementFactory.make("udpsink", "audioudpsink");
 		// TODO probably shouldn't have this +1 here....
-		videoUdpSink.set("port", port+1);
+		audioUdpSink.set("port", port+1);
 		audioUdpSink.set("host", hostname);
 				
 		// Start the pipeline processing
@@ -97,8 +97,9 @@ public class VideoSource {
 		Element.linkMany(audiosrc, vorbisenc, audioUdpSink);
 
 
-		
+		logger.info("Setting state to Playing");
 		pipe.setState(State.PLAYING);
+		logger.info("State is " + pipe.getState());
 	}
 
 	/**

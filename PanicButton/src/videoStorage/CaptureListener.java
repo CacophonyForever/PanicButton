@@ -24,6 +24,7 @@ public class CaptureListener extends Thread {
 	private static final Logger logger = Logger.getLogger("log");
 
 	private int incomingStreamPort;
+	private int incomingAudioStreamPort;
 	private String saveFile;
 	private boolean ready;
 
@@ -62,6 +63,7 @@ public class CaptureListener extends Thread {
 	public CaptureListener(int port, String saveFile) {
 		ready = false;
 		incomingStreamPort = port;
+		incomingAudioStreamPort = port + 1;
 		this.saveFile = saveFile;
 	}
 
@@ -71,6 +73,7 @@ public class CaptureListener extends Thread {
 	 * @return true, if successful
 	 */
 	private boolean init() {
+	
 		try {
 			// Initialize Gstreamer
 			String args[] = new String[0];
@@ -92,19 +95,35 @@ public class CaptureListener extends Thread {
 					"theoraenc");
 			final Element queue2 = ElementFactory.make("queue", "queue2");
 			final Element oggMux = ElementFactory.make("oggmux", "oggmux");
+			
+			// Set up audio stuff
+			final Element audioUdpSrc = ElementFactory.make("udpsrc", "audsource");
+			audioUdpSrc.set("port", incomingAudioStreamPort);
+			
+			final Element vorbisDecoder = ElementFactory.make("vorbisdec",
+					"vorbisdec");
+			
+			final Element audioQueue = ElementFactory.make("queue", "audioqueue");			
+			
+			final Element vorbisEnc = ElementFactory.make("vorbisenc",
+					"vorbisenc");
 
 			// set up save file
 			final Element fileSink = ElementFactory
 					.make("filesink", "filesink");
 			fileSink.set("location",
 					"/home/paul/vid" + System.currentTimeMillis() + ".ogg");
-			logger.info("Saving to " + saveFile);
+			logger.info("Listening on port(s) " + incomingStreamPort + " Saving to " + saveFile);
 
 			// start pipeline
 			pipe.addMany(udpsrc, theoraDecoder, queue1, videoRate,
 					theoraEncoder, queue2, oggMux, fileSink);
+			pipe.addMany(audioUdpSrc, vorbisDecoder, audioQueue, vorbisEnc);
 			Element.linkMany(udpsrc, theoraDecoder, queue1, videoRate,
-					theoraEncoder, queue2, oggMux, fileSink);
+					theoraEncoder, queue2, oggMux, fileSink);			
+			Element.linkMany(audioUdpSrc, vorbisDecoder, audioQueue, vorbisEnc,
+					oggMux);
+			
 			ready = true;
 			pipe.setState(org.gstreamer.State.PLAYING);
 			logger.info("Stream is : " + pipe.getState());
