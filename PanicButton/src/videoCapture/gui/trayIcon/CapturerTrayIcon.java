@@ -1,6 +1,8 @@
 package videoCapture.gui.trayIcon;
 
 import java.awt.AWTException;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.JPopupMenu;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -24,7 +27,8 @@ public class CapturerTrayIcon extends TrayIcon {
 			"/home/paul/PanicB/CapturerTrayIcon.png");
 
 	private static final Logger logger = Logger.getLogger("log");
-	TrayController controller;
+	private TrayController controller;
+	private PopupMenu rightClickMenu;
 
 	/**
 	 * Video Capturer Tray Icon View.
@@ -36,12 +40,30 @@ public class CapturerTrayIcon extends TrayIcon {
 	 * @throws AWTException
 	 *             if unable to access the system tray
 	 */
-	public CapturerTrayIcon(TrayController control) throws IOException,
+	public CapturerTrayIcon() throws IOException,
 			AWTException {
 		super(ImageIO.read(imageFile), "PanicButton Capturer");
-		controller = control;
 		SystemTray tray = SystemTray.getSystemTray();
 		tray.add(this);
+
+	}
+	
+	public void addListeners(TrayController control)
+	{
+		controller=control;
+		rightClickMenu = new PopupMenu();
+		MenuItem exitItem = new MenuItem("Exit");
+		exitItem.addActionListener(
+				new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				logger.info("Exit item clicked on tray icon");
+				controller.exitCapturer();
+			}
+			});
+		rightClickMenu.add(exitItem);
+		this.setPopupMenu(rightClickMenu);
+		
 		this.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -49,6 +71,12 @@ public class CapturerTrayIcon extends TrayIcon {
 				controller.showCapturerView();
 			}
 		});
+	}
+	
+	public void die()
+	{
+		SystemTray tray = SystemTray.getSystemTray();
+		tray.remove(this);
 	}
 
 }

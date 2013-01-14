@@ -8,6 +8,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Logger;
+
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -21,11 +26,12 @@ import java.net.Socket;
  * @see VideoCapturerEvent
  */
 public class VideoCapturerListener extends Thread {
+	private static final Logger logger = Logger.getLogger("log");
 
 	private static final int TIMEOUT_IN_MILLIS = 5000;
 	public static final int DEFAULT_PORT = 3601;
 	private boolean doListen = false;
-	ServerSocket listeningSocket;
+	SSLServerSocket listeningSocket;
 	public VideoCapturer videoCapturer;
 
 	/**
@@ -39,7 +45,10 @@ public class VideoCapturerListener extends Thread {
 	public VideoCapturerListener(VideoCapturer vidcap) throws Exception {
 		doListen = true;
 		videoCapturer = vidcap;
-		listeningSocket = new ServerSocket(DEFAULT_PORT);
+		SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+		final String[] enabledCipherSuites = { "SSL_DH_anon_WITH_RC4_128_MD5" };
+		listeningSocket = (SSLServerSocket)ssf.createServerSocket(DEFAULT_PORT);
+		listeningSocket.setEnabledCipherSuites(enabledCipherSuites);
 	}
 
 	/**
@@ -56,7 +65,12 @@ public class VideoCapturerListener extends Thread {
 			throws Exception {
 		doListen = true;
 		videoCapturer = vidcap;
-		listeningSocket = new ServerSocket(port);
+		
+		SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+		final String[] enabledCipherSuites = { "SSL_DH_anon_WITH_RC4_128_MD5" };
+		listeningSocket = (SSLServerSocket)ssf.createServerSocket(DEFAULT_PORT);
+		listeningSocket.setEnabledCipherSuites(enabledCipherSuites);
+		
 	}
 
 	/*
@@ -76,10 +90,13 @@ public class VideoCapturerListener extends Thread {
 		videoCapturer.setMyStatus(VideoCapturer.STATUS_READY);
 		while (doListen == true) {			
 			try {
-				Socket s = listeningSocket.accept();
+				SSLSocket s = (SSLSocket) listeningSocket.accept();
 				handleConnection(s.getInputStream(), s.getOutputStream());	
+				s.close();
 				Thread.sleep(250);
 			} catch (Exception e) {
+				e.printStackTrace();
+				
 				// TODO Auto-generated catch block
 			}
 		}
@@ -117,19 +134,38 @@ public class VideoCapturerListener extends Thread {
 		assert br.ready();
 		
 		String command = br.readLine();
-		
+		System.out.println("Got command=\"" + command + "\"");
 		if (command.equals("Hello")) {
 			pw.write("Hello\n");
 			pw.write(videoCapturer.getMyName() + "\n");
 			pw.write("Ready\n");
 			pw.flush();
 		} else if (command.equals("Trigger")) {
-			videoCapturer.beginRecording();
+			// get password
+			String password = br.readLine();
+			System.out.println("Got password = " + password + " THIS SHUD NEVER SHOW UP IN PLAINTEXT");				
+			//videoCapturer.beginRecording(true);
+			System.out.println("REC");
 			pw.write("Recording\n");
 			pw.flush();
+			Thread.sleep(1000);
+
+			System.out.println("fa");
+			pw.write("FAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa\n");
+			pw.flush();
+			Thread.sleep(6000);
+
+			System.out.println("bingbong");
+			pw.write("boink\n");
+			pw.flush();
+			Thread.sleep(2000);
+
 		} else {
 			throw new Exception("Unknown Command");
 		}
+		pw.close();
+		is.close();
+		os.close();
 
 	}
 

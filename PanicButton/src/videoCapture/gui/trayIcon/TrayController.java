@@ -10,6 +10,7 @@ public class TrayController {
 
 	/** The my capturer. */
 	private VideoCapturer capturer;
+	private CapturerTrayIcon icon;
 
 	/**
 	 * Instantiates a new tray controller.
@@ -17,8 +18,9 @@ public class TrayController {
 	 * @param cap
 	 *            the cap
 	 */
-	public TrayController(VideoCapturer cap) {
+	public TrayController(VideoCapturer cap, CapturerTrayIcon icon) {
 		capturer = cap;
+		this.icon=icon;
 	}
 
 	/**
@@ -26,6 +28,14 @@ public class TrayController {
 	 */
 	public void showCapturerView() {
 		capturer.displayView();
+	}
+	
+	public void exitCapturer()
+	{
+	
+		icon.setPopupMenu(null);
+		icon.die();
+		capturer.die();
 	}
 
 }

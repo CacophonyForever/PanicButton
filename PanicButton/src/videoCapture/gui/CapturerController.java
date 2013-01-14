@@ -272,5 +272,11 @@ public class CapturerController {
 			view.setVisible(true);
 		}
 	}
+	
+	public void die()
+	{
+		view.dispose();
+		configView.dispose();
+	}
 
 }

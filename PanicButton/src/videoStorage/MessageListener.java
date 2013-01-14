@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 // TODO: Auto-generated Javadoc
@@ -28,7 +31,11 @@ public class MessageListener extends Thread {
 
 	private static final int CAPTURER_HI_TIMEOUT_IN_MILLIS = 5000;
 	private int listenPort;
-	private Integer[] streamPorts;
+
+	// Boolean is whether or not the specific port is available for use
+	// TRUE: ready
+	// FALSE: in use
+	private Map<Integer, Boolean> streamPorts;
 	private boolean doListen;
 	private VideoStorageHost host;
 
@@ -38,9 +45,12 @@ public class MessageListener extends Thread {
 	 * @param host
 	 *            the host
 	 */
-	public MessageListener(VideoStorageHost host) {
+	public MessageListener(VideoStorageHost host, List<Integer> listenPorts) {
 		listenPort = DEFAULT_LISTEN_PORT;
-		streamPorts = new Integer[] { 3602, 3603, 3604 };
+		streamPorts = new HashMap<Integer, Boolean>();
+		for (Integer port : listenPorts) {
+			streamPorts.put(port, true);
+		}
 		this.host = host;
 	}
 
@@ -61,11 +71,13 @@ public class MessageListener extends Thread {
 	 * @param streamPorts
 	 *            the stream ports
 	 */
-	public MessageListener(VideoStorageHost host, int port,
-			Integer[] streamPorts) {
+	public MessageListener(VideoStorageHost host, int port, Integer[] sPorts) {
 		this.host = host;
 		listenPort = port;
-		this.streamPorts = streamPorts;
+		streamPorts = new HashMap<Integer, Boolean>();
+		for (Integer sPort : sPorts) {
+			streamPorts.put(sPort, true);
+		}
 	}
 
 	/*
@@ -115,7 +127,7 @@ public class MessageListener extends Thread {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private void handleCaptureListener(InputStream is, OutputStream os)
-			throws InterruptedException, IOException {
+			throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		PrintWriter pr = new PrintWriter(os);
 		long timeoutTime = System.currentTimeMillis()
@@ -123,22 +135,42 @@ public class MessageListener extends Thread {
 		while (System.currentTimeMillis() < timeoutTime) {
 			Thread.sleep(100);
 			if (br.ready()) {
-				String camName = br.readLine();
-				if (camName.equals("Status?")) {
+				boolean doRecord = false;
+				boolean useSoundStream = false;
+				String requestCommand = br.readLine();
+				if (requestCommand.equals("Status?")) {
 					System.out.println("Got asked for status. Telling it.");
 					handleGetStatus(br, pr);
 					return;
+				} else if (requestCommand.equals("RecordWithSound")) {
+					doRecord = true;
+					useSoundStream = true;
+				} else if (requestCommand.equals("Record")) {
+					doRecord = true;
 				}
-				System.out.println("Got " + camName);
-				int port = streamPorts[0];
-				String fileName = "~/vid" + System.currentTimeMillis() + ".ogg";
-				CaptureListener cLis = new CaptureListener(port, fileName);
-				cLis.start();
-				while (!cLis.isReady()) {
-					Thread.sleep(100);
+				if (doRecord) {
+					System.out.println("Got " + requestCommand);
+
+					Integer port = grabNextAvailableStreamPort();
+					int soundStreamPort = useSoundStream ? grabNextAvailableStreamPort()
+							: 0;
+					if (port == null)
+						throw new Exception("No available ports");
+
+					String fileName = "~/vid" + System.currentTimeMillis()
+							+ ".ogg";
+					CaptureListener cLis = new CaptureListener(port, fileName,
+							soundStreamPort);
+					cLis.start();
+					while (!cLis.isReady()) {
+						Thread.sleep(100);
+					}
+					pr.write(port + "\n");
+					if (useSoundStream) {
+						pr.write(soundStreamPort + "\n");
+					}
+					pr.flush();
 				}
-				pr.write(streamPorts[0] + "\n");
-				pr.flush();
 			}
 		}
 	}
@@ -176,23 +208,30 @@ public class MessageListener extends Thread {
 		this.listenPort = myListenPort;
 	}
 
-	/**
-	 * Gets the my stream ports.
-	 * 
-	 * @return the my stream ports
-	 */
-	public Integer[] getMyStreamPorts() {
+	public Map<Integer, Boolean> getStreamPorts() {
 		return streamPorts;
 	}
 
-	/**
-	 * Sets the my stream ports.
-	 * 
-	 * @param myStreamPorts
-	 *            the new my stream ports
-	 */
-	public void setMyStreamPorts(Integer[] myStreamPorts) {
-		this.streamPorts = myStreamPorts;
+	public void setStreamPorts(HashMap<Integer, Boolean> streamPorts) {
+		this.streamPorts = streamPorts;
+	}
+
+	private Integer grabNextAvailableStreamPort() {
+		for (Map.Entry<Integer, Boolean> entry : streamPorts.entrySet()) {
+			if (entry.getValue() == true) {
+				entry.setValue(false);
+				return entry.getKey();
+			}
+		}
+
+		return null;
+	}
+
+	public void setStreamPortsFromIntArray(Integer[] ports) {
+		streamPorts = new HashMap<Integer, Boolean>();
+		for (Integer port : ports) {
+			streamPorts.put(port, true);
+		}
 	}
 
 }

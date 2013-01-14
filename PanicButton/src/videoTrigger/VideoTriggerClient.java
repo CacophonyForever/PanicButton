@@ -30,14 +30,13 @@ public class VideoTriggerClient {
 	{
 		try {
 			settings = TriggerConfigSettings.loadConfigSettingsFromDisk();
+			this.populateListFromSettings();
 		} catch (Exception e) {
 			System.out.println("No saved settings found.");
 			settings = new TriggerConfigSettings();
 		}
 
-		for (RemoteVideoCapturer r : settings.getMyCaps()) {
-			this.addNewHost(r.getCapturerHost(), r.getCapturerPort());
-		}
+
 	}
 
 	/**
@@ -60,13 +59,22 @@ public class VideoTriggerClient {
 
 		newCap.confirmExistence();
 		settings.addCapturer(newCap);
+
+		controller.addCapturerToList(newCap);
 		try {
 			settings.saveToDisk();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		controller.addCapturerToList(newCap);
+	}
+	
+	public void populateListFromSettings()
+	{
+		for (RemoteVideoCapturer newCap :settings.getMyCaps())
+		{
+			controller.addCapturerToList(newCap);
+		}		
 	}
 
 	/**

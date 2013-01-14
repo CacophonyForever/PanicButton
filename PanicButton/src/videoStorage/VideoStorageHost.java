@@ -200,7 +200,7 @@ public class VideoStorageHost {
 	 * @return the num stream ports
 	 */
 	public int getNumStreamPorts() {
-		return messageListener.getMyStreamPorts().length;
+		return messageListener.getStreamPorts().size();
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class VideoStorageHost {
 					mySettings.getListenPort(), mySettings
 							.getRecieveVideoPorts().toArray(new Integer[0]));
 		} else {
-			messageListener.setMyStreamPorts(mySettings.getRecieveVideoPorts()
+			messageListener.setStreamPortsFromIntArray(mySettings.getRecieveVideoPorts()
 					.toArray(new Integer[0]));
 
 		}

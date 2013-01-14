@@ -25,7 +25,7 @@ public class VideoSource {
 	private String name;
 	private CapturerStorageServer storageServer;
 	private static final Logger logger = Logger.getLogger("log");
-	
+
 	private String audioSrc;
 
 	/**
@@ -48,54 +48,65 @@ public class VideoSource {
 	 * Begin recording and streaming.
 	 * 
 	 * @param hostname
-	 *            the hostname of the destination server 
+	 *            the hostname of the destination server
 	 * @param port
 	 *            the port of the destination server
 	 */
-	public void beginRecordingAndStreaming(String hostname, int port) {
+	public void beginRecordingAndStreaming(String hostname, int port,
+			int audioPort) {
 		logger.info("Starting recording");
-		
+
 		// initialize Gstreamer
 		String args[] = new String[0];
 		args = Gst.init("PanicButtonStream-" + name, args);
 		pipe = new Pipeline("pipeline");
-		
+
 		// set up Video Source
 		final Element videosrc = ElementFactory.make("v4l2src", "source");
 		videosrc.set("device", deviceName);
 		final Element videofilter = ElementFactory.make("capsfilter", "flt");
 		videofilter.setCaps(Caps
-				.fromString("video/x-raw-yuv, width=640, height=480"));	
+				.fromString("video/x-raw-yuv, width=640, height=480"));
 		final Element theoraenc = ElementFactory.make("theoraenc", "theoraenc");
 		theoraenc.set("bitrate", 150);
-		
+
 		// set up Audio Source
-		final Element audiosrc = ElementFactory.make("pulsesrc", "audiosrc");
-		final Element vorbisenc = ElementFactory.make("vorbisenc", "vorbisenc");
-			
+		if (audioPort > 0) {
+
+		}
 		// TODO set up local storage sink
-//		final Element fileSink = ElementFactory.make("filesink", "filesink");	
-//		fileSink.set("location", "/home/paul/test.foo");
-		
+		// final Element fileSink = ElementFactory.make("filesink", "filesink");
+		// fileSink.set("location", "/home/paul/test.foo");
+
 		// set up stream
 		final Element videoUdpSink = ElementFactory.make("udpsink", "udpsink");
 		videoUdpSink.set("port", port);
 		videoUdpSink.set("host", hostname);
-		
-		final Element audioUdpSink = ElementFactory.make("udpsink", "audioudpsink");
-		// TODO probably shouldn't have this +1 here....
-		audioUdpSink.set("port", port+1);
-		audioUdpSink.set("host", hostname);
-				
+
+		if (audioPort > 0) {
+
+		}
 		// Start the pipeline processing
 		logger.info("Streaming to " + hostname + " : " + port);
 		pipe.addMany(videosrc, videofilter, theoraenc, videoUdpSink);
 		Element.linkMany(videosrc, videofilter, theoraenc, videoUdpSink);
-				
-		logger.info("Streaming audio to " + hostname + " : " + port);
-		pipe.addMany(audiosrc, vorbisenc, audioUdpSink);
-		Element.linkMany(audiosrc, vorbisenc, audioUdpSink);
 
+		// If audio shit, do it!
+		if (audioPort > 0) {
+			final Element audiosrc = ElementFactory
+					.make("pulsesrc", "audiosrc");
+			final Element vorbisenc = ElementFactory.make("vorbisenc",
+					"vorbisenc");
+			final Element audioUdpSink = ElementFactory.make("udpsink",
+					"audioudpsink");
+			
+			audioUdpSink.set("port", audioPort);
+			audioUdpSink.set("host", hostname);
+
+			logger.info("Streaming audio to " + hostname + " : " + port);
+			pipe.addMany(audiosrc, vorbisenc, audioUdpSink);
+			Element.linkMany(audiosrc, vorbisenc, audioUdpSink);
+		}
 
 		logger.info("Setting state to Playing");
 		pipe.setState(State.PLAYING);

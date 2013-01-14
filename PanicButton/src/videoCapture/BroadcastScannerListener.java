@@ -87,8 +87,10 @@ public class BroadcastScannerListener extends Thread {
 		// Begin listening loop
 		while (doListen == true) {
 			try {
+				System.out.println("Dolisten = " + doListen);
 				DatagramPacket receivePacket = new DatagramPacket(receiveData,
 						receiveData.length);
+				serverSocket.setSoTimeout(5000);
 				serverSocket.receive(receivePacket);
 				
 				// get packet and check that its whats expected
@@ -120,6 +122,7 @@ public class BroadcastScannerListener extends Thread {
 	 * Break the listening loop, ends the thread
 	 */
 	public void stopListen() {
+		logger.info("SHUTTING OFF BROADCAST LISTENER");
 		doListen = false;
 	}
 

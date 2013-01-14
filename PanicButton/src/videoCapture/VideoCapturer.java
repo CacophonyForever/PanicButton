@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -29,6 +31,7 @@ public class VideoCapturer {
 	private VideoCapturerListener listener;
 	private BroadcastScannerListener broadcastScannerListener;
 	private CapturerController controller;
+	private byte[] passwordHash;
 	private static final Logger logger = Logger.getLogger("log");
 
 	/**
@@ -38,7 +41,7 @@ public class VideoCapturer {
 	 * @throws Exception
 	 *             there was a problem
 	 */
-	public void beginRecording() throws Exception {
+	public void beginRecording(boolean withSound) throws Exception {
 		this.setMyStatus(STATUS_RECORDING);
 
 		for (VideoSource source : videoSources) {
@@ -48,10 +51,15 @@ public class VideoCapturer {
 			// ask storage server for ports
 			Socket storageMsgSock = new Socket(storage.getMyHostname(),
 					storage.getMyPort());
+
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					storageMsgSock.getInputStream()));
+
 			PrintWriter pr = new PrintWriter(storageMsgSock.getOutputStream());
-			pr.write(source.getMyName() + "\n");
+			if (withSound)
+				pr.write("RecordWithSound\n");
+			else
+				pr.write("Record\n");
 			pr.flush();
 
 			// wait for response
@@ -62,8 +70,16 @@ public class VideoCapturer {
 
 			// process response
 			String portStr = br.readLine();
-			source.beginRecordingAndStreaming(storage.getMyHostname(),
-					Integer.parseInt(portStr));
+			if (withSound) {
+				String audioPort = br.readLine();
+				source.beginRecordingAndStreaming(
+						storage.getMyHostname(), Integer.parseInt(portStr),
+						Integer.parseInt(audioPort));
+
+			} else {
+				source.beginRecordingAndStreaming(storage.getMyHostname(),
+						Integer.parseInt(portStr),0);
+			}
 		}
 	}
 
@@ -255,5 +271,42 @@ public class VideoCapturer {
 	public void displayView() {
 		controller.displayView();
 	}
+
+	public void die() {
+		broadcastScannerListener.stopListen();
+		listener.stopListening();
+		controller.die();
+		System.exit(0);
+	}
+
+	public boolean hasPassword()
+	{
+		return this.passwordHash != null && this.passwordHash.length > 0;
+	}
+	
+	public boolean verifyPassword(String plaintextPass)
+	{
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+			byte[] hashedEnteredPass = md.digest(plaintextPass.getBytes("UTF-8"));
+			
+			return hashedEnteredPass == passwordHash;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public byte[] getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(byte[] passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+	
+	
 
 }
